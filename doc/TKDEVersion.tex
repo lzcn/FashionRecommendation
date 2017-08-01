@@ -82,14 +82,6 @@
 % have to be run twice to clear warning/error messages.
 
 
-
-\usepackage{amsthm,amsmath,amssymb}
-\usepackage{stmaryrd}
-\usepackage{paralist}
-\usepackage{indentfirst}
-\usepackage{graphicx}
-%\usepackage{subfigure}
-
 % *** CITATION PACKAGES ***
 %
 \ifCLASSOPTIONcompsoc
@@ -130,14 +122,20 @@
 
 % *** GRAPHICS RELATED PACKAGES ***
 %
-\ifCLASSINFOpdf
+\usepackage[pdftex]{graphicx}
+% declare the path(s) where your graphic files are
+\graphicspath{{./img/}}
+% and their extensions so you won't have to specify these with
+% every instance of \includegraphics
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+%\ifCLASSINFOpdf
   % \usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
-  % \graphicspath{{../pdf/}{../jpeg/}}
+  % \graphicspath{{./img/}}
   % and their extensions so you won't have to specify these with
   % every instance of \includegraphics
   % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
-\else
+%\else
   % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
   % will default to the driver specified in the system graphics.cfg if no
   % driver is specified.
@@ -147,7 +145,7 @@
   % and their extensions so you won't have to specify these with
   % every instance of \includegraphics
   % \DeclareGraphicsExtensions{.eps}
-\fi
+%\fi
 % graphicx was written by David Carlisle and Sebastian Rahtz. It is
 % required if you want graphics, photos, etc. graphicx.sty is already
 % installed on most LaTeX systems. The latest version and documentation
@@ -175,17 +173,19 @@
 
 % *** MATH PACKAGES ***
 %
-%\usepackage{amsmath}
+\usepackage{amsmath}
 % A popular package from the American Mathematical Society that provides
 % many useful and powerful commands for dealing with mathematics.
 %
 % Note that the amsmath package sets \interdisplaylinepenalty to 10000
 % thus preventing page breaks from occurring within multiline equations. Use:
-%\interdisplaylinepenalty=2500
+\interdisplaylinepenalty=2500
 % after loading amsmath to restore such page breaks as IEEEtran.cls normally
 % does. amsmath.sty is already installed on most LaTeX systems. The latest
 % version and documentation can be obtained at:
 % http://www.ctan.org/pkg/amsmath
+\usepackage{amsthm,amssymb}
+\usepackage{stmaryrd}
 
 
 
@@ -207,6 +207,8 @@
 % Also of interest may be the (relatively newer and more customizable)
 % algorithmicx.sty package by Szasz Janos:
 % http://www.ctan.org/pkg/algorithmicx
+%\usepackage{algorithmic}
+\usepackage{algorithmicx}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 
@@ -349,7 +351,7 @@
 
 % *** PDF, URL AND HYPERLINK PACKAGES ***
 %
-%\usepackage{url}
+\usepackage{url}
 % url.sty was written by Donald Arseneau. It provides better support for
 % handling and breaking URLs. url.sty is already installed on most LaTeX
 % systems. The latest version and documentation can be obtained at:
@@ -405,7 +407,7 @@
 %% -------
 %% Matrix
 %% -------
-\newcommand{\M}[1]{{\boldsymbol{{\MakeUppercase{#1}}}}}
+\newcommand{\M}[1]{{\textbf{{\MakeUppercase{#1}}}}}
 \newcommand{\FacMat}[2]{\M{#1}^{(#2)}}
 % p-norm
 \newcommand{\norm}[2]{\|#1\|_{#2}}
@@ -468,16 +470,16 @@
 % journal papers have the author affiliations above the "Manuscript
 % received ..."  text while in non-compsoc journals this is reversed. Sigh.
 
-\author{ ~Shell,~\IEEEmembership{Member,~IEEE,}
-        John~Doe,~\IEEEmembership{Fellow,~OSA,}
-        and~Jane~Doe,~\IEEEmembership{Life~Fellow,~IEEE}% <-this % stops a space
-\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem M. Shell was with the Department
-of Electrical and Computer Engineering, Georgia Institute of Technology, Atlanta,
-GA, 30332.\protect\\
-% note need leading \protect in front of \\ to get a newline within \thanks as
-% \\ is fragile and will error, could use \hfil\break instead.
-E-mail: see http://www.michaelshell.org/contact.html
-\IEEEcompsocthanksitem J. Doe and J. Doe are with Anonymous University.}% <-this % stops an unwanted space
+\author{ ~Zhi~Lu,%~\IEEEmembership{Member,~IEEE,}
+        ~Yang~Hu,%~\IEEEmembership{Member,~IEEE,}
+        and~Bing~Zeng,~\IEEEmembership{~Fellow,~IEEE}% <-this % stops a space
+\IEEEcompsocitemizethanks{
+	\IEEEcompsocthanksitem Zhi Lu, Yang Hu and Bing Zeng are with School of Electronic Engineering, University of Electronic Science and Technology of China.\protect\\
+	% note need leading \protect in front of \\ to get a newline within \thanks as
+	% \\ is fragile and will error, could use \hfil\break instead.
+	E-mail: zhilu@std.uestc.edu.cn, \{yanghu,eezeng\}@uestc.edu.cn
+	%\IEEEcompsocthanksitem J. Doe and J. Doe are with Anonymous University.
+}% <-this % stops an unwanted space
 \thanks{Manuscript received April 19, 2005; revised August 26, 2015.}}
 
 % note the % following the last \IEEEmembership and also \thanks - 
@@ -501,8 +503,10 @@ E-mail: see http://www.michaelshell.org/contact.html
 
 
 % The paper headers
-\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
-{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Computer Society Journals}
+\markboth{IEEE Transactions on Knowledge and Data Engineering,~Vol.~14, No.~8, August~2015}%
+{Zhi \MakeLowercase{\textit{et al.}}: A Sampling Technique for Approximate Maximum Search in Tensor}
+%\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
+%{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Computer Society Journals}
 % The only time the second header will appear is for the odd numbered pages
 % after the title page when using the twoside option.
 % 
@@ -538,7 +542,7 @@ E-mail: see http://www.michaelshell.org/contact.html
 % command as these need to go into the title area created by \maketitle.
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
-\IEEEtitleabstractindextext{%
+\IEEEtitleabstractindextext{
 \begin{abstract}
 Factorization models have been extensively used for
 recovering the missing entries of a matrix or tensor.
@@ -557,7 +561,6 @@ We provide theoretical analysis of the sampling algorithm and evaluate its perfo
 Experimental results indicate that the proposed approach is orders of magnitude faster than exhaustive computing.
 When applied to the special case of searching in a matrix,
 it also requires fewer samples than the state-of-the-art method.
-
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -595,6 +598,7 @@ Maximum Search, Tensor Decomposition, Information Retrial
 
 
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
+
 % Computer Society journal (but not conference!) papers do something unusual
 % with the very first section heading (almost always called "Introduction").
 % They place it ABOVE the main text! IEEEtran.cls does not automatically do
@@ -602,106 +606,6 @@ Maximum Search, Tensor Decomposition, Information Retrial
 % \IEEEraisesectionheading{} command. Note the need to keep any \label that
 % is to refer to the section immediately after \section in the above as
 % \IEEEraisesectionheading puts \section within a raised box.
-
-\IEEEPARstart{M}{atrix} and tensor completion has received considerable attention in recent years.
-Many problems in application can be formulated
-as recovering the missing entries of a matrix or tensor.
-In some scenarios, such as image and video in-painting~\cite{Ankita14},
-all lost entries are needed to be filled in.
-In some others, however, it is difficult and also unnecessary to recover them all.
-For example, in recommender systems, the size of prediction matrix or tensor,
-which is determined by the numbers of users and items, is usually rather large and needs to be reconstructed from latent representation of users and items.
-It is computational expensive to compute all of the unknown values, even given one peculiar user.
-On the other hand, for recommendation purpose,
-we are only interested in a few entries that are the largest within a sub-array of the matrix or tensor.
-% TODD: Complete the following citation
-Moreover, a good recommendation system should avoid overspecialization[need a cite] and one simply way to increase the serendipity is to "inject a note of randomness"[need a cite].
-The largest entries of a matrix/tensor are not only the central concerns for personalized recommendation, but also meaningful in many other cases.
-In a similarity matrix, the top entries correspond to pairs of items that are most similar,
-which are of interest for applications like link prediction in graph~\cite{LibenNowell07},
-duplicate detection~\cite{Ke2010} as well as information retrieval~\cite{Salton03IR}.
-And in neuroimage meta-analysis,
-the largest matrix/tensor entries may suggest the most probable associations between brain functions and behaviors.
-For those mentioned fields, the actual value is not critical and the minority owns relative high values.
-
-In this work, we study the problem of efficiently identifying the top entries within a tensor without exhaustive computing. The tensor, as a multi-way generalization of the matrix, has been exploited more and more recently.
-% TODO: more survey on recommender system
-Take the recommender systems for example.
-While traditional focus is on the user-item matrix/tensor
-which is required for data representation in many emerging settings
-such as context-aware recommendation~\cite{?},
-where contextual information like time and location is considered,
-and collaborative filtering recommender\cite{HuYiLa15,Rendle_PITF,KoYe09}
-where the object to be recommended is a set of items that interact with each other.
-Following the most common paradigm, we assume that the tensor can be decomposed into some factors,
-which can be estimated from the observed entries by some learning algorithms.
-Specifically, we focus on the CANDECOMP/PARAFAC decomposition model.
-
-CP decomposition~\cite{KoBa09} is a widely used technique for exploring and
-extracting the underlying structure of multi-way data.
-Given a $N$-order tensor $\T{X}\in\mathbb{R}^{L_1\times \cdots\times L_N}$,
-CP decomposition approximates it by $N$ factor matrices $\FacMat{A}{1},\FacMat{A}{2},\ldots,\FacMat{A}{N}$,
-such that
-\begin{align}
-\label{eq:CPDecomposition}
-\T{X}&\approx\KT{\FacMat{A}{1},\FacMat{A}{2},\cdots,\FacMat{A}{N}} \\ \notag
-&=\sum_{r=1}^R\ColVecA{1}\circ\ColVecA{2}\circ\cdots\circ\ColVecA{N}
-\end{align}
-where each factor matrix
-$\FacMat{A}{n}=[\ColVec{a}{n}{*1}\ColVec{a}{n}{*2}\cdots\ColVec{a}{n}{*R}], n=1,\ldots,N$
-is of size $L_n\times R$ with $\ColVec{a}{n}{*r}\in\mathbb{R}^{L_n}$
-being the $r$-th column.
-The symbol ``$\circ$'' represents the vector outer product.
-$R$ is the tensor rank, indicating the number of latent factors.
-Element-wise, \Eqn{CPDecomposition} is written as
-\begin{align}
-\label{eq:CPValue}
-x_\V{i} \approx \sum_{r=1}^{R}\anr{1}{r}\anr{2}{r}\cdots\anr{N}{r}
-\end{align}
-where $\V{i}$ is short for the index tuple $(i_1,i_2,\ldots,i_N)$.
-
-The tensors models relationships for components from each dimensions(actual meaning like categories according to its application). In many interesting fields, they apply the decomposition to compute factor matrices with small $R$ instead of learning/computing the whole tensor. And the retrial stage calls for the reconstruction of whole tensor.
-
-\subsection{Problem Reformation and Related Works}
-
-Given $N$ factor matrices $\textbf{A}^{(1)},\ldots,\textbf{A}^{(N)}$ and a parameter $t$,
-the explicit CP decomposition of an interaction tensor $\T{X}$, we would like to find $t$ index tuples $\{\V{i}_1,\ldots,\V{i}_t\}$ which correspond to the top-$t$ largest values $x_{\V{i}}$. This problem subsumes many existing problems in the literature.
-When $N=2$, it is exactly the MAD (Maximum All-pairs Dot-product Search) problem~\cite{BaPiKoSe15}
-that finds the largest entries in the product of two matrices.
-And MAD contains the MIPS (Maximum Inner Product Search)~\cite{Cohen97} problem
-as the special case with one matrix being a single column.
-
-The most obvious approach is to compute the entries exhaustively via the reconstruction of whole tensor.
-However, this becomes prohibitive as the sizes of the factor matrices grow.
-There is some literature in approximate matrix multiplication.
-But these methods are not suited even for MAD,
-since only a few entries among the millions are of interest.
-The more efficient solution is to directly search the top ones.
-This has been extensively studied for the MIPS problem.
-Popular approaches include LSH (Locality Sensing Hashing)~\cite{Andoni08,ALSH14},
-space partition techniques like k-d tree
-and some sampling-based approaches~\cite{Drineas2006,John15} are also used.
-Recently, Ballard et al. proposed a randomized approach called diamond sampling~\cite{BaPiKoSe15} to the MAD problem.
-They selected diamonds, i.e. four-cycles, from a weighted tripartite representation of the two factor matrices,
-with the probability of selecting a diamond corresponding to index pair $(i_1,i_2)$
-being proportional to $(\RowVecA{1}\cdot\RowVecA{2})^2$,
-where we use $\RowVecA{n}$ to represent the $i_n$ row of the factor matrix.
-For tensor, there hasn't been any study conducted yet.
-
-Inspired by the work of diamond sampling,
-we apply index sampling methods to the case of tensor,
-whose entries are computed by the CP decomposition model.
-We design a strategy to sample the index tuple $\V{i}$ proportional to the magnitude of the corresponding entries.
-We further extend the basic to make the sampling proportional to the $k$-th power of the entries, amplifying the focus on largest ones.
-For the application of recommender systems,
-an algorithm that reuse the samples for different users is presented.
-We provide theoretical analysis for our sampling algorithms,
-and derive concentration bounds on the behavior.
-We evaluate the sampling methods on several real-world data sets.
-The results show that they are orders of magnitude faster than exact computing.
-When compared to previous approach for matrix sampling, our methods require much fewer samples.
-And we hope to see the improvement for serendipity in applications need to find the "unexpected" objects like a movie recommender.
-
 
 % The very first letter is a 2 line initial drop letter followed
 % by the rest of the first word in caps (small caps for compsoc).
@@ -729,14 +633,9 @@ And we hope to see the improvement for serendipity in applications need to find 
 % 
 %\hfill August 26, 2015
 
-%\subsection{Subsection Heading Here}
-%Subsection text here.
-
 % needed in second column of first page if using \IEEEpubid
 %\IEEEpubidadjcol
 
-%\subsubsection{Subsubsection Heading Here}
-%Subsubsection text here.
 
 
 % An example of a floating figure using the graphicx package.
@@ -834,104 +733,82 @@ And we hope to see the improvement for serendipity in applications need to find 
 % footnotes above bottom floats. This can be corrected via the
 % \fnbelowfloat command of the stfloats package.
 
+\IEEEPARstart{M}{atrix} and tensor completion has received considerable attention in recent years.
+Many problems in application can be formulated as recovering the missing entries of a matrix or tensor. In some scenarios, such as image and video in-painting~\cite{Ankita14},
+all lost entries are needed to be filled in. In some others, however, it is difficult and also unnecessary to recover them all. For example, in recommender systems, the size of prediction matrix or tensor, which is determined by the numbers of users and items, is usually rather large and needs to be reconstructed from latent representation of users and items. It is computational expensive to compute all of the unknown values, even given one particular user. On the other hand, for recommendation purpose, we are only interested in a few entries that are the largest within a sub-array of the matrix or tensor.
+%Moreover, a good recommendation system should avoid overspecialization[need a cite] and one simply way to increase the serendipity is to "inject a note of randomness"[need a cite].
+The largest entries of a matrix/tensor are not only the central concerns for personalized recommendation, but also meaningful in many other cases. In a similarity matrix, the top entries correspond to pairs of items that are most similar, which are of interest for applications like link prediction in graph~\cite{LibenNowell07,DunlavyKolda11}, duplicate detection~\cite{Ke2010}, information retrieval~\cite{Salton03IR} and the electroencephalography analysis\cite{Estienne2001Multi}. 
+
+For those mentioned fields in literature, where the model of tensor decomposition is employed, the final tensor is always not apparent directly but the decomposition forms are and reconstruction is followed among those decomposed matrices. Besides the actual value in final tensor is not critical and the minority often owns relative high values. So in this work, we study the problem of efficiently identifying the top entries within a tensor without exhaustive computing. 
+
+The tensor, as a multi-way generalization of the matrix, has been exploited more and more recently. Take the recommender systems for example. While traditional focus is on the user-item matrix/tensor which is required for data representation in many emerging settings such as context-aware recommendation~\cite{BPTF,Adomavicius2011}, where contextual information like time and location is considered, and set-based collaborative filtering recommender\cite{HuYiLa15,Rendle_PITF,KoYe09} where the object to be recommended is a set of items or suits that interact with each other. Following the most common paradigm, we assume that the tensor can be decomposed into some factors, which can be estimated from the observed entries by some learning algorithms.
+
+Specifically, we focus on the CANDECOMP/PARAFAC decomposition model~\cite{KoBa09,AcarYener09}. CP decomposition is one kind of tensor decomposition technique that widely used for exploring and extracting the underlying structure of multi-way data including a interpretable factorization for time dimension. Given a $N$-order tensor $\T{X}\in\mathbb{R}^{L_1\times \cdots\times L_N}$, CP decomposition approximates it by $N$ factor matrices $\FacMat{A}{1},\FacMat{A}{2},\ldots,\FacMat{A}{N}$, such that:
+\begin{align}
+\label{eq:CPDecomposition}
+\T{X}&\approx\KT{\FacMat{A}{1},\FacMat{A}{2},\cdots,\FacMat{A}{N}} \\ \notag
+&=\sum_{r=1}^R\ColVecA{1}\circ\ColVecA{2}\circ\cdots\circ\ColVecA{N}
+\end{align}
+where each factor matrix $\FacMat{A}{n}=[\ColVec{a}{n}{*1}\ColVec{a}{n}{*2}\cdots\ColVec{a}{n}{*R}], n=1,\ldots,N$ is of size $L_n\times R$ with $\ColVec{a}{n}{*r}\in\mathbb{R}^{L_n}$ being the $r$-th column. The symbol ``$\circ$'' represents the vector outer product. $R$ is the tensor rank, indicating the number of latent factors. Element-wise,~\Eqn{CPDecomposition} is written as:
+\begin{align}
+\label{eq:CPValue}
+x_\V{i} \approx \sum_{r=1}^{R}\anr{1}{r}\anr{2}{r}\cdots\anr{N}{r}
+\end{align}
+where $\V{i}$ is short for the index tuple $(i_1,i_2,\ldots,i_N)$.
 
 
+\subsection{Problem Reformation and Related Works}
+The tensor models relationships between each dimensions and are trained into factor matrices with small $R$ among many interesting fields. And the retrial stage calls for the reconstruction of whole tensor. So given $N$ factor matrices $\textbf{A}^{(1)},\ldots,\textbf{A}^{(N)}$, the explicit CP decomposition of a prediction tensor $\T{X}$, and a parameter $t$, we would like to find $t$ index tuples $\{\V{i}_1,\ldots,\V{i}_t\}$ which correspond to the top-$t$ largest values $x_{\V{i}}$. This problem subsumes many existing problems in the literature.
+When $N=2$, it is exactly the MAD (Maximum All-pairs Dot-product Search) problem~\cite{BaPiKoSe15}
+that finds the largest entries in the product of two matrices.
+And MAD contains the MIPS (Maximum Inner Product Search)~\cite{Cohen97} problem
+as the special case with one matrix being a single column. The most obvious approach is to compute the entries exhaustively via the reconstruction of whole tensor.
+However, this becomes prohibitive as the sizes of the factor matrices grows.
+
+There is some literature in approximate matrix multiplication.
+However these methods are not suited even for MAD, since only a few entries among the millions are of interest. The more efficient solution in  matrix multiplication is to directly search the top ones. This has been extensively studied for the MIPS problem. Popular approaches include LSH (Locality Sensing Hashing)~\cite{Andoni08,ALSH14}, space partition techniques like k-d tree and some sampling-based approaches~\cite{Drineas2006,John15} are also proposed. Recently, Ballard et al. proposed a randomized approach called diamond sampling~\cite{BaPiKoSe15} for the MAD problem. They selected diamonds, i.e. four-cycles, from a weighted tripartite representation of the two factor matrices, with the probability of selecting a diamond corresponding to index pair $(i_1,i_2)$ being proportional to $(\RowVecA{1}\cdot\RowVecA{2})^2$, where $\RowVecA{n}$ is used to represent the $i_n$ row of the factor matrix $\FacMat{A}{1},\FacMat{A}{2}$. For tensor, there hasn't been any study conducted yet.
+
+Inspired by the work of diamond sampling~\cite{BaPiKoSe15}, we apply index sampling methods to the case of tensor, whose entries are computed by the CP decomposition model. We design a strategy to sample the index tuple $\V{i}$ proportional to the magnitude of the corresponding entries. We further extend the basic approach to strengthen the sampling proportional to the $k$-th power of the entries, amplifying the focus on largest ones. For the application of recommender systems, an algorithm that reuse the samples for different users is presented. We also provide theoretical analysis for our sampling algorithms, and derive concentration bounds on the behavior. We evaluate the sampling methods on several real-world data sets. The results show that they are orders of magnitude faster than exact computing. When compared to previous approach for matrix sampling, our methods require much fewer samples. 
 
 \section{The Sampling Method}
-In this section, we will propose a basic sampling for finding the top-$N$ entries in tensor, after which, a advanced sampling approach will be introduced .
+In this section, we propose the basic sampling approach for finding the top-$N$ entries in tensor, after which, an advanced one will be introduced.
 
-% TODO: More explanation figures high dimension
-% TODO: More detialed captions
-\begin{figure*}[!ht]
-	\centering
-	\subfloat[]{
-		\includegraphics{img/fig_graph_factor_matrices_a}
-		\label{fig:GraphMatrices:a}
-	}
-	\qquad
-	\subfloat[]{
-		\includegraphics{img/fig_graph_factor_matrices_b}
-		\label{fig:GraphMatrices:b}
-	}
-	\subfloat[]{
-		\includegraphics{img/fig_graph_factor_matrices_c}
-		\label{fig:GraphMatrices:c}
-	}
-	\caption{Graph representation of factor matrices and sampling mechanism.}
-	\label{fig:GraphMatrices}
-\end{figure*}
-
-%\begin{figure}[!ht]
-%	\centering
-%	% Requires \usepackage{graphicx}
-%	\includegraphics[viewport = 0 20 240 130]{./img/fig_graph_factor_matrices}\\
-%	\caption{Graph representation of factor matrices}
-%	\label{fig:GraphMatrices}
-%\end{figure}
 
 \subsection{Basic Sampling Method}
 
-The idea of randomized approach is to sample the entries in a tensor according to some probability distribution so that the larger one entry is the more probable it is picked. To achieve this, we use a (N+1)-partite graph to represent the factor matrices $\FacMat{A}{1},\ldots,\FacMat{A}{N}$ in \Eqn{CPDecomposition}. Consider one of the matrix $\FacMat{A}{n}\in \mathbb{R}^{L_n \times R}$, it is represented by a bipartite graph shown within the dash-dot box in ~\Fig{GraphMatrices:a}.
-We first use $R$ nodes indexed by $r\in[R]$ to denote the $R$ columns of it, $[R]$ denotes $\{1,\ldots,R\}$. These nodes are also shared by other factor matrices. They constitute the core partition. We then use $L_n$ nodes, indexed by $i_n\in [L_n]$, to represent the rows of $\FacMat{A}{n}$. They constitute a peripheral partition. Edge $(i_n,r)$ exists if the entry $\anr{n}{r}$ is nonzero.
+\begin{figure*}
+	\centering
+	\subfloat[]{
+		\includegraphics[width=0.3\linewidth]{GraphFactorMatrices_a}
+		\label{fig:GraphMatrices:a}
+	}\hfil
+	\subfloat[]{
+		\includegraphics[width=0.3\linewidth]{GraphFactorMatrices_b}
+		\label{fig:GraphMatrices:b}
+	}\hfil
+	\subfloat[]{
+		\includegraphics[width=0.3\linewidth]{GraphFactorMatrices_c}
+		\label{fig:GraphMatrices:c}
+	}
+	\caption{Graph representation of factor matrices and sampling mechanism. (a) The graph representation of matrices. (b) Once a node in sampled from core partition, each peripheral partition will has a probability distribution conditioned on that node. (c) A sampled index tuple.}
+	\label{fig:GraphMatrices}
+\end{figure*}
 
-To sample an entry, we sequentially pick each of its indices starting from the core partition. We first assign some weights to the nodes in core partition. For $r\in[R]$, let
+The idea of randomized approach is to sample the entries in a tensor according to some probability distribution so that the larger one entry is the more probable it is picked. To explain this mechanism, we use a (N+1)-partite graph to represent the factor matrices $\FacMat{A}{1},\ldots,\FacMat{A}{N}$ in \Eqn{CPDecomposition}. 
+
+Consider one of the matrix $\FacMat{A}{n}\in \mathbb{R}^{L_n \times R}$, it is represented by a bipartite graph shown within the dash-dot box in ~\Fig{GraphMatrices:a}. We first use $R$ nodes indexed by $r\in[R]$ to denote the $R$ columns of it, where $[R]$ denotes $\{1,\ldots,R\}$. They constitute the core partition and are also shared by other factor matrices. We then use $L_n$ nodes, indexed by $i_n\in [L_n]$, to represent the rows of $\FacMat{A}{n}$ which constitute a peripheral partition. Edge $(i_n,r)$ exists if the value $\anr{n}{r}$ is nonzero. Beside, each factor matrix is represented by a individual peripheral partition as depicted in~\Fig{GraphMatrices:a}. To improve legibility, only one factor matrix is plotted in detail.
+
+To sample an index tuple $\V{i}$, we sequentially pick each of its indices $i_n$ but starting from the core partition. We first assign appropriate weights to the nodes in core partition. For $r\in[R]$, let
 \begin{equation}
 w_r = \WeightR
 \end{equation}
-where $\|\cdot\|$ denotes 1-norm of the vector.
-We sample the nodes in core partition with probability $w_r/\norm{\V{W}}{1}$.
-After one core node is chosen, shown in ~\Fig{GraphMatrices:b},
-$N$ peripheral nodes, one from each peripheral partition, are picked,
-where the index $i_n$ is drawn with probability $|\anr{n}{r}|/\norm{\ColVecA{n}}{1}$.
-After an index tuple $\V{i}=\coord$, as depicted shematically in ~\Fig{GraphMatrices:c}, is obtained,
-a score is computed that
-\begin{align}
+where $\|\cdot\|$ denotes 1-norm of the vector. We sample the nodes in core partition with probability $w_r/\norm{\V{W}}{1}$. As shown in ~\Fig{GraphMatrices:b}, after one core node indexed by $r$ is chosen, $N$ peripheral nodes, one from each peripheral partition, to be picked conditioned on $r$. And the node in $n$-th partition indexed by $i_n$ is drawn with probability $|\anr{n}{r}|/\norm{\ColVecA{n}}{1}$. After an index tuple $\V{i}=\coord$, as depicted shematically in ~\Fig{GraphMatrices:c}, is obtained, a score is computed as following:
+\begin{equation}
 \score{\ell}  = sgn(\anr{1}{r}\cdot\anr{2}{r}\cdots\anr{N}{r})
-\end{align}
-where $\ell$ denotes the $\ell$-th sample.
-If the indices $\V{i}$ has not been sampled before,
-a container is created with $\predx = \score{\ell}$.
-Otherwise, we increase $\predx$ by $\score{\ell}$.
-The procedure is shown in \Alg{CoreSampling}.
+\end{equation}
+where $\ell$ denotes the $\ell$-th sample. If the index tuple $\V{i}$ has not been sampled before, a container is created with $\predx = \score{\ell}$. Otherwise, we increase $\predx$ by $\score{\ell}$. The procedure is shown in \Alg{CoreSampling}.
 
-Let $\Psi_p = \{\V{i}_p|p = 1,2,\ldots,P\}$
-denote the set of unique indices that have been sampled.
-$P\leq s$ since some $\V{i}$ may be picked more than once.
-There are two strategies for identifying the $t$ largest entries from the samples.
-In the first one,
-we directly compute the exact entry value for each sample in $\Psi_{p}$ using \Eqn{CPValue}
-and then find the $t$ largest ones.
-Inspired by previous works, in the second strategy,
-we utilize the scores $\predx$ obtained during sampling.
-Computing the exact entry value using \Eqn{CPValue} for all sampled indices
-would be time consuming when $R$ and $N$ are large,
-while the load for computing $\predx$ is much lighter.
-Moreover, as we show through theoretical analysis later,
-the expectation of $\predx$ is proportional to the exact value $x_{\V{i}}$.
-Therefore, we can use these estimated scores to filter out the relatively small ones
-and only compute the exact values for a subset of the sampled indices.
-Specifically, we denote the subset by $\Psi_{t'},t'>t$,
-that contains $t'$ indices corresponding to the $t'$ largest $\predx$, i.e.
-$
-\Psi_{t'} = \{ \V{i} | \predx \geq \hat{x}_{\V{i'}},
-\forall i'\in \Psi_{p} \backslash \Psi_{t'}
-\}
-$.
-Then the exact values  are computed only for $\V{i}$ in $\Psi_{t'}$.
-And the $t$ indices with the largest $x_{\V{i}}$ are extracted.
-
-The chose of $t'$ is a trade-off between accuracy and computation.
-The recall of the first direct computing strategy is determined by the probability
-that indices of the largest entries are sampled during each iteration.
-The higher the probabilities for the top entries, the more likely they will be sampled
-and thus the higher the recall.
-The second strategy will save some computation.
-However, since the scores are only estimations of the true entry values,
-some orders between the entries may not be kept
-that some top entries may be missed during filtering,
-which will lead to a slightly lower recall than the first strategy.
-
-\begin{algorithm}[!ht]
+\begin{algorithm}
 	\caption{The basic sampling method}
 	\label{alg:CoreSampling}
 	Given factor matrix $\FacMat{A}{n}\in \mathbb{R}^{L_n\times R}, n = 1,2,\ldots,N$.\\
@@ -962,45 +839,45 @@ which will lead to a slightly lower recall than the first strategy.
 	\end{algorithmic}
 \end{algorithm}
 
-\subsection{Theoretical Analysis}
-In each iteration,
-we sample one node, indexed by $r$,
-from the core partition and $N$ nodes,
-indexed by $\boldsymbol{i}$, from the peripheral partitions.
-Let $\epsilon_{\boldsymbol{i},r}$
-denote the event of choosing $r$
-and $\boldsymbol{i}$, $\epsilon_{\boldsymbol{i}}$ denote that of choosing $\boldsymbol{i}$.
-We first analyze the probability $p(\epsilon_{\V{i}})$ that an entry is sampled by the sampling algorithms and then the expectation of the scores we computed during sampling. 
-We also prove error bound on our estimate.
+\subsubsection{Filtering}
 
-\begin{lemma}\label{lem:Probability}
-	Suppose that all elements of the factor matrix $\M{A}^{(n)}, n\in[N]$ are nonnegative. We have
-	$p(\epsilon_{\V{i}})$ equals to $x_{\V{i}}/\norm{\V{w}}{1}$.
+Let $\Psi_p = \{\V{i}_p|p = 1,2,\ldots,P\}$ denote the set of unique index tuples that have been sampled. $P\leq s$ since some $\V{i}$ may be picked more than once. There are two strategies for identifying the $t$ largest entries from the samples. 
+
+In the first one, we directly compute the exact entry value for each sample in $\Psi_{p}$ using \Eqn{CPValue} and then find the $t$ largest ones. Inspired by previous works\cite{BaPiKoSe15,Cohen97}, in the second strategy, we utilize the scores $\predx$ obtained during sampling. Since computing the exact entry value for all sampled indices would be time consuming when $R$ and $N$ are large, while the load for computing $\predx$ is much lighter. Moreover, as we show through theoretical analysis later, the expectation of $\predx$ is proportional to the exact value $x_{\V{i}}$. Therefore, we can use these estimated scores to filter out the relatively small ones and only compute the exact values for a subset of the sampled indices. Specifically, we denote the subset by $\Psi_{t'}$ that contains $t'$ index tuples corresponding to the top-$t'$ largest $\predx$, i.e. $\Psi_{t'} = \{ \V{i} | \predx \geq \hat{x}_{\V{i'}},\forall i'\in \Psi_{p} \backslash \Psi_{t'}\}$. Then the exact values are computed only for $\V{i}$ in $\Psi_{t'}$. And the $t$ index tuples with the largest $x_{\V{i}}$  in $\Psi_{t'}$ are extracted as the output of our algorithm.
+
+The choice of $t'$ is a trade-off between computation and accuracy. And the recall, percentage of top-$t$ entries identified, of the first direct computing strategy is determined by the probability of largest entries(its index tuples) are sampled during each iteration. The higher the probabilities for the top entries, the more likely they will be sampled and thus the higher the recall. The second strategy will save computation. However, since the scores are only estimations of the true entry values, some orders between the entries may not be kept so that some top entries may be filtered out, which lead to a slightly lower recall than the first strategy.
+
+
+\subsection{Theoretical Analysis}
+In each iteration, we sample one node, indexed by $r$, from the core partition and $N$ nodes, indexed by $\boldsymbol{i}$, from $N$ peripheral partitions. Let $\epsilon_{\boldsymbol{i},r}$ denotes the event of choosing $r$ and $\boldsymbol{i}$, while $\epsilon_{\boldsymbol{i}}$ denotes that of choosing $\boldsymbol{i}$. We first analyze the probability $p(\epsilon_{\V{i}})$ that an index tuple to be sampled during each iteration and the expectation of estimation $\predx$ with an error bound on it.
+
+\begin{lemma}\label{lem:CoreBasicProbability}
+Suppose that all elements in the factor matrices $\M{A}^{(n)}, n\in[N]$ are nonnegative. Then we have	$p(\epsilon_{\V{i}})=x_{\V{i}}/\norm{\V{w}}{1}$.
 \end{lemma}
-\begin{proof}
-	The probability $p(\epsilon_{\V{i}})$ is the marginal distribution of $p(\epsilon_{\V{i},r})$,
-	so we have:
+
+\begin{IEEEproof}
+The probability $p(\epsilon_{\V{i}})$ is simply the marginal distribution of $p(\epsilon_{\V{i},r})$, so we have:
 	\begin{align*}
 	p(\epsilon_{\V{i}})
 	& = \sum_{r} p(\epsilon_{\V{i},r}) \\
+	& = \sum_{r} p(r)\cdot p(i_1|r)\cdots p(i_N|r) \\
 	& = \sum_{r} \frac{w_{r}}{\norm{\V{W}}{1}}
 	\frac{|\anr{1}{r}|}{\NormColA{1}{r}} \ldots \frac{|\anr{N}{r}|}{\NormColA{N}{r}}\\
 	& = \sum_{r} \frac{\anr{1}{r}\cdots\anr{N}{r}}{\norm{\V{W}}{1}}
 	= \frac{x_{\V{i}}}{\norm{\V{w}}{1}}
 	\end{align*}
-\end{proof}
-Let $c_{\V{i},\ell}$ be a random variable that if $\V{i}$ is the index tuple
-being picked in the $\ell$-th iteration, $c_{\V{i},\ell}=\score{\ell}$.
-Otherwise $c_{\V{i},\ell}=0$.
-The final score $\predx$ can be written as
-\begin{equation}\label{eq:score}
+\end{IEEEproof}
+
+Let $c_{\V{i},\ell}$ be a random variable that $c_{\V{i},\ell}=\score{\ell}$ if $\V{i}$ is picked in the $\ell$-th iteration. Otherwise $c_{\V{i},\ell}=0$. Thus final score $\predx$ can be written as:
+\begin{equation}\label{eq:CoreBasicScore}
 \predx = \sum_{\ell=1}^{s} c_{\V{i},\ell}
 \end{equation}
 
-\begin{lemma}\label{lem:Expectation}
+\begin{lemma}\label{lem:CoreBasicExpectation}
 	The expectation of $\predx$ equals to $sx_{\V{i}}/\norm{\V{w}}{1}$.
 \end{lemma}
-\begin{proof}
+
+\begin{IEEEproof}
 	$c_{\V{i},\ell}$ are i.i.d for fixed $\V{i}$ and varing $\ell$.
 	Thus the expectation of $\predx$ is:
 	\begin{align*}
@@ -1011,30 +888,12 @@ The final score $\predx$ can be written as
 	& = s\sum_{r} \frac{\anr{1}{r}\cdots\anr{N}{r}}{\norm{\V{W}}{1}}
 	= \frac{sx_{\V{i}}}{\norm{\V{w}}{1}}
 	\end{align*}
-\end{proof}
+\end{IEEEproof}
 
 \subsubsection{Error Bounds}
-% TODO: delete theorem 1
-We derive two error bounds, which suggest the number of samples required to get reasonable results.
-\begin{theorem}\label{theo:ObservationBound}
-	Fix error probability $\sigma \in (0,1)$.
-	Assuming all entries in the factor matrices are nonnegative.
-	The number of samples required for the index tuple $\V{i}$ to be picked as least once is
-	\[
-	s \geq \ln(1/\sigma)/p(\epsilon_{\V{i}})
-	\]
-\end{theorem}
-\begin{proof}
-	This is a binomial distribution${\sim}B(s,p(\epsilon_{\V{i}}))$,
-	in which $p(\epsilon_{\V{i}})$ is relative small and $s$ large.
-	So the Poisson distribution with $\lambda = sp(\epsilon_{\V{i}})$
-	can be used to approximate $Pr(x\geq1)$.
-	That is $Pr(x\geq1) = 1-Pr(x=0)\approx 1-e^{-sp(\epsilon_{\V{i}})} \geq 1-\sigma$,
-	which gives $s \geq \ln(1/\sigma)/p(\epsilon_{\V{i}})$.
-\end{proof}
-
-\begin{theorem}\label{theo:Bound}
-	Fix $\delta > 0$ and error probability $\sigma \in (0,1)$.
+The~\Lem{CoreBasicExpectation} shows that $\predx\norm{\V{w}}{1}/s$ is an estimation for $x_{\V{i}}$. Further, we derive the error bound on this estimation.
+\begin{theorem}\label{theo:CoreBasicBound}
+	Fix $\delta > 0$ and error probability $\sigma\in(0,1)$.
 	Assuming all entries in the factor matrices are nonnegative.
 	If the number of samples
 	\[
@@ -1046,11 +905,11 @@ We derive two error bounds, which suggest the number of samples required to get 
 	\]
 \end{theorem}
 
-\begin{proof}
+\begin{IEEEproof}
 	We follow the proof of Lemma 3 in~\cite{BaPiKoSe15}.
 	Since  $c_{\V{i},1},\cdots,c_{\V{i},s}$
 	are independent random variables taking values in $\{0,1\}$.
-	So $\predx$ is the sum of independent Poisson trials(Bernoulli trials are the special case).
+	So $\predx$ is the sum of independent Poisson trials(while Bernoulli trials are the special case).
 	The Chernoff bounds on the sum of Poisson trials shows, for any $0 <\delta <1 $:
 	\[
 	Pr(|\predx - \mu|\geq\delta\mu) \leq 2\exp{(-\mu\delta^2/3)}
@@ -1066,163 +925,48 @@ We derive two error bounds, which suggest the number of samples required to get 
 	\[
 	Pr(|\predx\norm{\V{W}}{1}/s - x_{\V{i}}| > \delta x_{\V{i}}) \leq \sigma
 	\]
-\end{proof}
+\end{IEEEproof}
 
+The~\Lem{CoreBasicProbability} suggests that the sampling process is a binomial distribution${\sim}B(s,p(\epsilon_{\V{i}}))$ with relatively small $p(\epsilon_{\V{i}})$ and large $s$. So the Poisson distribution with $\lambda = sp(\epsilon_{\V{i}})$ can be used to approximate the probability $Pr(x\geq 1)$, which is event for picking the index tuple $\V{i}$ at least once after all iterations. The approximation is $Pr(x\geq1) = 1-Pr(x=0)\approx 1-e^{-sp(\epsilon_{\V{i}})}$. If we fix some error probability with $\sigma \in (0,1)$ and takes the equality, it gives $1-e^{-sp(\epsilon_{\V{i}})} \geq 1-\sigma$. This suggests an approximate sample number with $s \geq \ln(1/\sigma)/p(\epsilon_{\V{i}})$ of finding the index tuple $\V{i}$ with error probability $\sigma$. And~\Theo{CoreBasicBound} also suggests that to get a reasonable estimation for $x_{\V{i}}$ (say $\sigma = 0.05,\delta=0.1$), we need the sample numbers to be around the level of $1000\times\norm{\V{w}}{1}/x_{\V{i}}$.
 
-\section{Extension of the Basic Sampling Method} 
+\section{Extension of the Basic Sampling Method}
+%TODO
+The recall we can obtain heavily depends on the probability distribution for sampling the entries ie. $p(\epsilon_{\V{i}})$. To achieve better performance, we focus on the improvement of this distribution by amplifying the odds for the top entries. Instead of sampling one node $r$ from the core partition, we pick one but compound node $(r,r')$ from some extended core partition, in which the number of nodes is expanded to $R^2$. Then conditioned on $(r,r')$, we sample $N$ nodes indexed by $(i_1,\ldots,i_N)$ from the peripheral partitions as depicted in ~\Fig{ExtensionOfCorePartition}. As a matter of course, the weight of edge $((r,r'),i_n)$, connecting the node $(r,r')$ and $i_n$, as well the weight of nodes in core partition, need to be redesigned so that the expectation of estimations will still meet the actual value.
 
-% TODO: Figure for the Extension of Core Partitions
-
-The recall we can obtain heavily depends on the probability distribution for sampling the entries. To achieve better performance, we should improve this distribution by amplifying the odds for the top entries.
-\begin{figure}[tph!]
+\begin{figure}[!ht]
 	\centering
-	\includegraphics[]{img/ExtensionOfCorePartition}
-	\caption{Extension of core partition}
+	\includegraphics[]{ExtensionOfCorePartition}
+	\caption{Extension of core partition. This is an extension with order $k=2$. And these compound nodes constitute a new core partition.}
 	\label{fig:ExtensionOfCorePartition}
 \end{figure}
 
-Instead of sampling one node $r$ from the core partition,
-we can still pick one but compound node $(r,r')$ from some extended core partition,
-in which the number of nodes is expanded to $R^2$.
-Then conditioned on $(r,r')$, we sample $N$ nodes  
-indexed by $(i_1,\ldots,i_N)$ from the peripheral partitions as depicted in ~\Fig{ExtensionOfCorePartition}. However the weight or probability $p(i_n,(r,r'))$ of the edge $((r,r'),i_n)$ connecting the node $(r,r')$ and $i_n$ need to be computed so that the expectation will meet actual value.
-
-More generally, we can pick $k$ compound nodes $(r_1,r_2,\ldots,r_k)$ from the extended core partition
-and then draw $N$ peripheral nodes.
-We name this strategy Core$^k$ sampling.
-The method discussed in previous section is a special case with $k=1$.
-
-By sampling $k$ nodes from the core partition,
-we virtually create $R^k$ compound nodes,
+More generally, we virtually create $R^k$ $k$-compound nodes,
 indexed by $\V{r}=(r_1,\ldots,r_k)$.
-These compound nodes constitute a new partition called Core$^k$ partition.
-To assign probabilities for picking the compound nodes and probabilities for picking a peripheral node given a compound nodes, we propose formula for the weight of edge that connecting $\V{r}$ and $i_n$ as follows:
-% will be we extend each factor matrix $\FacMat{A}{n}$ with size $L_n\times R$ to a new matrix $\M{E}^{(n)}$ with size $L_n\times R^k$.
-% The entries of $\M{E}^{(n)}$ are obtained by
-\begin{align}
+These $k$-compound nodes constitute a new partition called Core$^k$ partition. And the algorithm starts by sampling nodes from the Core$^k$ partition. We name this strategy Core$^k$ sampling. The method discussed in previous section is a special case with $k=1$. 
+
+To assign weight for $k$-compound nodes $\V{r}$ and probabilities of sampling peripheral nodes given $\V{r}$, we firstly consider the  weight of edge $(\V{r},i_n)$. The proposed formula for computing the edge weight is defined as followed:
+\begin{equation}
 \enr{n}{r} = \anr{n}{r_1}\cdots\anr{n}{r_k}
-\end{align}
-and immediately, the weight for a compound nodes $\V{r}$ is:
-%where we use $\V{r}$ to index the columns of $\M{E}^{(n)}$. And the weight we assign to the compound node $\V{r}$ is
-\begin{align}
-w_{\V{r}} = \NormColE{1}{r}\cdots\NormColE{N}{r}
-\end{align}
-where $\V{e}_{*\V{r}}^{(n)}$ is the weight vector drawn for the $n$-th peripheral partition and its  1-norm is:
-%with $\V{e}_{*\V{r}}^{(n)}$ being the column of $\M{E}^{(n)}$ indexed by $\V{r}$ and
-\begin{align}
-\NormColE{n}{r} = \sum_{i_n}|\anr{n}{r_1}\cdots\anr{n}{r_k}|
-\end{align}
-If we straighten the nodes in Core$^k$ partition to one dimension with $b(\V{r})$ indicating the position, then Core$^k$ sampling strategy will be the same as basic algorithm acting on a set of matrices, presumably, called $\M{E}^{(n)}$.
-The $b(\V{r})$-th column of $\M{E}^{(n)}$ is $\V{e}_{*b(\V{r})}^{(n)} = [e_{1,\V{r}}^{(n)},\cdots,e_{L_n,\V{r}}^{(n)}]^T$.
-The alternative explanation help us to implement the sampling approach.
-
-\subsection{Theoretical Analysis}
-
-The sampling procedure is similar with \Alg{CoreSampling}
-and we summarize it in \Alg{CoreExtensionSampling}.
-In this part, we prove that in Core$^k$ sampling,
-the probability that entry $\V{i}$ is sampled is proportional to $x_{\V{i}}^k$
-and the expectation of $\predx$ is also proportional to the $k$-th power of $x_{\V{i}}$.
-Therefore, in Core$^k$ extension, more focus will be put on the top entries.
-
-In each iteration, 
-we sample one compound node, indexed by $\boldsymbol{r}$, 
-from the Core$^k$ partition and $N$ nodes, 
-indexed by $\boldsymbol{i}$, from the peripheral partitions. 
-Let $\epsilon_{\boldsymbol{i},\boldsymbol{r}}$ 
-denote the event of choosing $\boldsymbol{r}$ 
-and $\boldsymbol{i}$, $\epsilon_{\boldsymbol{i}}$ denote that of choosing $\boldsymbol{i}$.
-We then analyze the probability $p(\epsilon_{\V{i}})$ and the expectation of the scores in Core$^k$ sampling, we also prove error bound on Core$^k$ sampling.
-
-\subsubsection{Probability of Coordinates}
-\begin{lemma}\label{lem:Probability}
-	Suppose that all elements of the factor matrix $\M{A}^{(n)}, n\in[N]$ are nonnegative. 
-	In Core$^k$ sampling, We have $p(\epsilon_{\V{i}})$ equals to $x^k_{\V{i}}/\norm{\V{w}}{1}$.
-\end{lemma}
-\begin{proof}
-	The probability $p(\epsilon_{\V{i}})$ is the marginal distribution of $p(\epsilon_{\V{i},\V{r}})$,
-	so we have:
-	\begin{align*}
-	p(\epsilon_{\V{i}})
-	& = \sum_{\V{r}} p(\epsilon_{\V{i},\V{r}}) \\
-	%& = \sum_{\V{r}} p({\rm pick\ }\V{r})p({\rm pick\ }i_1|\V{r})\cdots p({\rm pick\ }i_N|\V{r})\\
-	& = \sum_{\V{r}} \frac{w_{\V{r}}}{\norm{\V{W}}{1}}
-	\frac{|\Sca{e}{1}{\V{r}}|}{\norm{\ColVec{e}{n}{*\V{r}}}{1}}\ldots\frac{|\Sca{e}{N}{\V{r}}|}{\norm{\ColVec{e}{N}{*\V{r}}}{1}}\\
-	& = \sum_{\V{r}} \frac{\Sca{e}{1}{\V{r}}\cdots\Sca{e}{N}{\V{r}}}{\norm{\V{W}}{1}}\\
-	& = \frac{(\sum_{r}\anr{1}{r}\cdots\anr{N}{r})^k}{\norm{\V{W}}{1}}
-	= \frac{x^k_{\V{i}}}{\norm{\V{w}}{1}}
-	\end{align*}
-\end{proof}
-
-Let $c_{\V{i},\ell}$ be a random variable that if $\V{i}$ is the index tuple 
-being picked in the l-th iteration, $c_{\V{i},\ell}=\score{\ell}$. 
-Otherwise $c_{\V{i},\ell}=0$. 
-The final score $\predx$ can be written as
-\begin{equation}\label{eq:score}
-\predx = \sum_{\ell=1}^{s} c_{\V{i},\ell}
 \end{equation}
-\begin{lemma}\label{lem:Expectation}
-	The expectation of approximation $\hat{x}_{\V{i}}$ in Core$^k$ sampling equals to $sx^k_{\V{i}}/\norm{\V{w}}{1}$.
-\end{lemma}
-\begin{proof}
-	$c_{\V{i},\ell}$ are i.i.d for fixed $\V{i}$ and varing $\ell$. 
-	The expectation of $\predx$ is:
-	\begin{align*}
-	\mathbb{E}[\predx]
-	& = \sum_{\ell=1}^{s}\mathbb{E}[c_{\V{i},\ell}] = \sum_{\ell=1}^{s}\sum_{\V{r}} p(\epsilon_{\V{i},\V{r}})\score{\ell} \\
-	& = s\sum_{\V{r}} \frac{|\enr{1}{r}\cdots\enr{N}{r}|}{\norm{\V{W}}{1}}
-	sgn(\enr{1}{r}\cdots\enr{N}{r})\\
-	& = s\sum_{\V{r}} \frac{\enr{1}{r}\cdots\enr{N}{r}}{\norm{\V{W}}{1}}\\
-	& = s\frac{(\sum_{r}\anr{1}{r}\cdots\anr{N}{r})^k}{\norm{\V{W}}{1}}
-	= \frac{sx^k_{\V{i}}}{\norm{\V{w}}{1}}
-	\end{align*}
-\end{proof}
+and weights of $k$-compound nodes $\V{r}$ are analogous to those in basic sampling:
+\begin{equation}
+w_{\V{r}} = \NormColE{1}{r}\cdots\NormColE{N}{r}
+\end{equation}
+where $\V{e}_{*\V{r}}^{(n)}$ is the weight vector drawn from the $n$-th peripheral partition and its 1-norm is:
+\begin{equation}
+\NormColE{n}{r} = \sum_{i_n}\enr{n}{r}=\sum_{i_n}|\anr{n}{r_1}\cdots\anr{n}{r_k}|
+\end{equation}
 
-\subsubsection{Error Bounds}
-\begin{theorem}\label{theo:Bound}
-	Fix $\delta > 0$ and error probability $\sigma \in (0,1)$.
-	Assuming all entries in factor matrices are nonnegative.
-	In Core$^k$ sampling, if the number of samples
-	\[
-	s \geq 3\norm{\V{w}}{1}\log{(2/\sigma)}/(\delta^2 x^k_{\V{i}})
-	\]
-	then
-	\[
-	Pr(|\predx\norm{\V{W}}{1}/s - x^k_{\V{i}}| > \delta x^k_{\V{i}}) \leq \sigma
-	\]
-\end{theorem}
+After an index tuple $\V{i}$ is sampled, a score is also computed for container $\predx$:
+\begin{equation}
+\score{\ell} \leftarrow sgn(\enr{1}{r}\cdots\enr{N}{r})
+\end{equation}
+The sampling procedure is similar with \Alg{CoreSampling} and we summarize it in \Alg{CorekSampling}. If we straighten the nodes in Core$^k$ partition to one dimension with $b(\V{r})$ indicating the positions, then Core$^k$ sampling strategy will be the same as basic algorithm acting on a set of new matrices, presumably, called $\M{E}^{(n)}$, $n\in[N]$. Then the $b(\V{r})$-th column of $\M{E}^{(n)}$ is $[e_{1,\V{r}}^{(n)},\cdots,e_{L_n,\V{r}}^{(n)}]^T$. This is an alternative explanation of the Core$^k$ sampling.
 
-\begin{proof}
-	Since  $c_{\V{i},1},\cdots,c_{\V{i},s}$
-	are independent random variables taking values in $\{0,1\}$.
-	So $\predx$ is the sum of independent Poisson trials(Bernoulli trials are the special case).
-	The Chernoff bounds on the sum of Poisson trials shows, for any $0 <\delta <1 $:
-	\[
-	Pr(|\predx - \mu|\geq\delta\mu) \leq 2\exp{(-\mu\delta^2/3)}
-	\]
-	where $\mu=\mathbb{E}[\predx]=sx^k_{\V{i}}/\norm{\V{W}}{1}$ in Core$^k$ sampling.
-	And by the choice of $s$, we have
-	$\mu\leq 3\log{(2/\sigma)/\delta^2}$.
-	Then
-	\[
-	Pr(|\predx-sx^k_{\V{i}}/\norm{\V{W}}{1}|\geq\delta sx^k_{\V{i}}/\norm{\V{W}}{1}) \leq \sigma
-	\]
-	multiplying $\norm{\V{W}}{1}/s$ inside ${\rm Pr}[\cdot]$ gives
-	\[
-	Pr(|\predx\norm{\V{W}}{1}/s - x^k_{\V{i}}| > \delta x^k_{\V{i}}) \leq \sigma
-	\]
-\end{proof}
-
-Note that in the diamond sampling method for matrix~\cite{BaPiKoSe15},
-they also sampled two nodes from the core partition.
-However, the second node $r'$ was sampled after the indices $i_1$ and $i_2$ were picked
-and none extension of the factor matrices were introduced.
-As a result, only the estimation $\predx$ was improved
-but not the probability of picking the top entries.
-
-\begin{algorithm}[!ht]
+ In the following part, we prove that in Core$^k$ sampling, the probability an index tuple $\V{i}$ is sampled in on iteration is proportional to $x_{\V{i}}^k$ and the expectation of $\predx$ is also proportional to the $k$-th power of $x_{\V{i}}$. Therefore, in Core$^k$ extension, more focus will be put on the top entries.
+\begin{algorithm}
 	\caption{Core$^k$ sampling}
-	\label{alg:CoreExtensionSampling}
+	\label{alg:CorekSampling}
 	Given factor matrix $\FacMat{A}{n}\in \mathbb{R}^{L_n\times R}, n = 1,2,\ldots,N$.\\
 	Let $s$ be the number of samples, $k$ for the extension order.$[R]^k$ denotes all the
 	\begin{algorithmic}[1]
@@ -1249,36 +993,113 @@ but not the probability of picking the top entries.
 	\end{algorithmic}
 \end{algorithm}
 
+\subsection{Theoretical Analysis}
+
+For Core$^k$ sampling, in each iteration we sample one compound node, indexed by $\boldsymbol{r}$, from the Core$^k$ partition and $N$ nodes, indexed by $\boldsymbol{i}$, from $N$ peripheral partitions. Let $\epsilon_{\boldsymbol{i},\boldsymbol{r}}$ denotes the event of choosing $\boldsymbol{r}$ and $\boldsymbol{i}$, $\epsilon_{\boldsymbol{i}}$ denote that of choosing $\boldsymbol{i}$. Similarly, we analyze the probability $p(\epsilon_{\V{i}})$ and the expectation of $\predx$.
+
+\subsubsection{Probability of Coordinates}
+
+\begin{lemma}\label{lem:Probability}
+	Suppose that all elements of the factor matrices $\M{A}^{(n)}, n\in[N]$ are nonnegative. 
+	In Core$^k$ sampling, we have $p(\epsilon_{\V{i}})$ equals to $x^k_{\V{i}}/\norm{\V{w}}{1}$.
+\end{lemma}
+
+\begin{IEEEproof}
+	The probability $p(\epsilon_{\V{i}})$ is marginal distribution of $p(\epsilon_{\V{i},\V{r}})$,
+	so we have:
+	\begin{align*}
+	p(\epsilon_{\V{i}})
+	& = \sum_{\V{r}} p(\epsilon_{\V{i},\V{r}}) \\
+	%& = \sum_{\V{r}} p({\rm pick\ }\V{r})p({\rm pick\ }i_1|\V{r})\cdots p({\rm pick\ }i_N|\V{r})\\
+	& = \sum_{\V{r}} \frac{w_{\V{r}}}{\norm{\V{W}}{1}}
+	\frac{|\Sca{e}{1}{\V{r}}|}{\norm{\ColVec{e}{n}{*\V{r}}}{1}}\ldots\frac{|\Sca{e}{N}{\V{r}}|}{\norm{\ColVec{e}{N}{*\V{r}}}{1}}\\
+	& = \sum_{\V{r}} \frac{\Sca{e}{1}{\V{r}}\cdots\Sca{e}{N}{\V{r}}}{\norm{\V{W}}{1}}\\
+	& = \frac{(\sum_{r}\anr{1}{r}\cdots\anr{N}{r})^k}{\norm{\V{W}}{1}}
+	= \frac{x^k_{\V{i}}}{\norm{\V{w}}{1}}
+	\end{align*}
+\end{IEEEproof}
+
+Let $c_{\V{i},\ell}$ be a random variable that if $\V{i}$ has been picked in the $\ell$-th iteration, $c_{\V{i},\ell}=\score{\ell}$. Otherwise $c_{\V{i},\ell}=0$. The final score $\predx$ can be written as
+\begin{equation}\label{eq:CorekScore}
+\predx = \sum_{\ell=1}^{s} c_{\V{i},\ell}
+\end{equation}
+
+\begin{lemma}\label{lem:Expectation}
+	The expectation of approximation $\hat{x}_{\V{i}}$ in Core$^k$ sampling equals to $sx^k_{\V{i}}/\norm{\V{w}}{1}$.
+\end{lemma}
+\begin{IEEEproof}
+	$c_{\V{i},\ell}$ are i.i.d for fixed $\V{i}$ and varing $\ell$. 
+	The expectation of $\predx$ is:
+	\begin{align*}
+	\mathbb{E}[\predx]
+	& = \sum_{\ell=1}^{s}\mathbb{E}[c_{\V{i},\ell}] = \sum_{\ell=1}^{s}\sum_{\V{r}} p(\epsilon_{\V{i},\V{r}})\score{\ell} \\
+	& = s\sum_{\V{r}} \frac{|\enr{1}{r}\cdots\enr{N}{r}|}{\norm{\V{W}}{1}}
+	sgn(\enr{1}{r}\cdots\enr{N}{r})\\
+	& = s\sum_{\V{r}} \frac{\enr{1}{r}\cdots\enr{N}{r}}{\norm{\V{W}}{1}}\\
+	& = s\frac{(\sum_{r}\anr{1}{r}\cdots\anr{N}{r})^k}{\norm{\V{W}}{1}}
+	= \frac{sx^k_{\V{i}}}{\norm{\V{w}}{1}}
+	\end{align*}
+\end{IEEEproof}
+
+\subsubsection{Error Bounds}
+
+\begin{theorem}\label{theo:Bound}
+	Fix $\delta > 0$ and error probability $\sigma \in (0,1)$.
+	Assuming all entries in factor matrices are nonnegative.
+	In Core$^k$ sampling, if the number of samples
+	\[
+	s \geq 3\norm{\V{w}}{1}\log{(2/\sigma)}/(\delta^2 x^k_{\V{i}})
+	\]
+	then
+	\[
+	Pr(|\predx\norm{\V{W}}{1}/s - x^k_{\V{i}}| > \delta x^k_{\V{i}}) \leq \sigma
+	\]
+\end{theorem}
+
+\begin{IEEEproof}
+	Since  $c_{\V{i},1},\cdots,c_{\V{i},s}$
+	are independent random variables taking values in $\{0,1\}$.
+	So $\predx$ is the sum of independent Poisson trials(Bernoulli trials are the special case).
+	The Chernoff bounds on the sum of Poisson trials shows, for any $0 <\delta <1 $:
+	\[
+	Pr(|\predx - \mu|\geq\delta\mu) \leq 2\exp{(-\mu\delta^2/3)}
+	\]
+	where $\mu=\mathbb{E}[\predx]=sx^k_{\V{i}}/\norm{\V{W}}{1}$ in Core$^k$ sampling.
+	And by the choice of $s$, we have
+	$\mu\leq 3\log{(2/\sigma)/\delta^2}$.
+	Then
+	\[
+	Pr(|\predx-sx^k_{\V{i}}/\norm{\V{W}}{1}|\geq\delta sx^k_{\V{i}}/\norm{\V{W}}{1}) \leq \sigma
+	\]
+	multiplying $\norm{\V{W}}{1}/s$ inside ${\rm Pr}[\cdot]$ gives
+	\[
+	Pr(|\predx\norm{\V{W}}{1}/s - x^k_{\V{i}}| > \delta x^k_{\V{i}}) \leq \sigma
+	\]
+\end{IEEEproof}
+
+%Note that in the diamond sampling method for matrix~\cite{BaPiKoSe15},
+%they also sampled two nodes from the core partition.
+%However, the second node $r'$ was sampled after the indices $i_1$ and $i_2$ were picked
+%and none extension of the factor matrices were introduced.
+%As a result, only the estimation $\predx$ was improved
+%but not the probability of picking the top entries.
+
 \subsection{Sampling for Multiple Users}
-In this subjection,
-we present an algorithm for efficiently identifying top entries in sub-arrays of a tensor,
-which is of particular interest for recommender systems.
-Without loss of generality,
-we assume that the first factor matrix $\FacMat{A}{1}$ corresponds to users,
-with each row characterizing a single user.
-For user $\V{u} = \RowVecA{1}$,
-we are interested in top entries in the (N-1)-order tensor $\T{X}_\V{u}$,
-whose CP decomposition is
+
+In this subjection, we present an algorithm for efficiently identifying top entries in sub-arrays of a tensor, which is of particular interest for recommender systems. Without loss of generality, we assume that the first factor matrix $\FacMat{A}{1}$ corresponds to all existing users with each row characterizing a single user. For one user $\V{u} = \RowVecA{1}$ we are interested in top entries in the (N-1)-order tensor $\T{X}_\V{u}$, whose CP decomposition is
 \begin{align}
-\T{X}_{\V{u}} \approx \KT{\V{u},\FacMat{A}{2},\cdots,\FacMat{A}{N}}
+\label{eq:UserCP}
+\T{X}_{\V{u}} &\approx \KT{\V{u},\FacMat{A}{2},\cdots,\FacMat{A}{N}} \\ \notag
+&=\sum_{r=1}^Ru_r\cdot\ColVecA{2}\circ\cdots\circ\ColVecA{N}
 \end{align}
 
-To generate recommendations for multiple users,
-an naive approach is to run the above sampling algorithm independently for different users.
-However, this is totally unnecessary.
-We find that for different users,
-only the probabilities for sampling nodes from the core partition are different.
-In the following step, they share the same distribution for sampling the peripheral nodes.
-Based on this observation, for each node in the core partition,
-we build a pool containing indices $\V{i}=(i_2,\ldots,i_N)$ that have been picked given that core node.
-For a new user, when a core node is chosen,
-%we can directly use the indices kept in its pool and only sample new $\V{i}$ when necessary.
-By sharing among users, a huge number of samples can be saved.
-This procedure is illustrated in~\Alg{QuerySampling}.
+To generate recommendations for multiple users, an naive approach is to run the above sampling algorithm independently for different users. One can blend $\V{u}$ into other factor matrices so that it becomes a general form or takes $\V{u}$ as a special factor matrix. However, this is totally unnecessary. We find that if we take the $\V{u}$ as a special factor matrix, for different users, only the probabilities for sampling nodes from the core partition are different. Since the peripheral partition of $\V{u}$ is a special case with one node leaking the influence only to core partition. In the following step, different users share the same distribution for sampling the other peripheral nodes. In expectation, the difference between users is how many index tuples need to sample conditioned on each compound nodes. 
 
-\begin{algorithm}[!ht]
+Based on this observation, for each node in the core partition, we build $R^k$ pool each containing indices $\V{i}=(i_2,\ldots,i_N)$ that have been picked for a given $\V{r}$. For a new user, when a core node $\V{r}$ is chosen, we can directly use the indexes tuples kept in its pool and only sample new $\V{i}$ when necessary. By sharing among users, a huge number of samples can be saved. And the procedure is illustrated in~\Alg{MultiUsersSampling}.
+
+\begin{algorithm}
 	\caption{Finding top-$t$ entries for multiple users}
-	\label{alg:QuerySampling}
+	\label{alg:MultiUsersSampling}
 	Given factor matrix $\FacMat{A}{n}\in \mathbb{R}^{L_n\times R}, n = 1,2,\ldots,N$.
 	$\FacMat{A}{1}$ is the set of querying users.
 	Let $s$ be the number of samples, and $m=R^k$.
@@ -1307,13 +1128,9 @@ This procedure is illustrated in~\Alg{QuerySampling}.
 \end{algorithm}
 
 \section{Implementation Details}
-In this section, we discuss some implementation details that could improve the performance.
 
-Instead of first picking a node from the Core/Core$^k$ partition
-and then choosing $N$ peripheral nodes,
-in implementation, we first directly get $s$ core nodes in one loop.
-Specifically, we compute the expected number of occurrence of the nodes.
-Let $\mu_{\V{r}}=sw_\V{r}/\norm{\V{w}}{1}$, the count for $\V{r}$ is:
+In this section, we discuss some implementation details that could improve the performance.
+Follow the previous work\cite{Cohen97}, instead of picking a (compound) node from the Core(Core$^k$) partition, we directly get $s$ core nodes in one loop. We compute the expected number $\mu_{\V{r}}=sw_\V{r}/\norm{\V{w}}{1}$ for each (compound) nodes. And sample the count $f_\V{r}$ :
 \begin{equation}f_\V{r}=
 \left\{
 \begin{array}{ll}
@@ -1322,197 +1139,208 @@ Let $\mu_{\V{r}}=sw_\V{r}/\norm{\V{w}}{1}$, the count for $\V{r}$ is:
 \end{array}
 \right.
 \end{equation}
-This requires $O(R^k)$ work while sampling $\V{r}$ $s$ times requires $O(sk\log R)$ work.
+so that it will keep the expected value of $\mu_{\V{r}}$. This requires $O(R^k)$ work while sampling $\V{r}$ $s$ times requires $O(sk\log R)$ work.
 
-To conduct Core$^k$ sampling,
-we extend the factor matrices to $\FacMat{E}{n}$,
-which requires $O(L_nR^k)$ space for each $n\in[N]$.
-This will be costly in practice when $k$ is large.
-Using the above strategy, we have obtained the number of times each core node appears.
-Given a core node, the sampling of the peripheral nodes
-will only depend on one column in $\FacMat{E}{n}$ that is indexed by $\boldsymbol{r}$.
-Therefore, instead of storing the whole $\FacMat{E}{n}$,
-we only keep one column of it at a time.
-This requires $O(L_1+\cdots+L_N)$ space in total.
-When k is small, we can directly store $\FacMat{E}{n}$ in exchange for speed.
+To conduct Core$^k$ sampling, utilizing the extension matrices explanation, we extend the factor matrices to $\FacMat{E}{n}$, which requires extra $O(L_nR^k)$ in space and $O(R^k)$ in computation for each $n$ in $[N]$. This will be costly in storage when $k$ is large. Using the above strategy, we have obtained the number of times $f_\V{r}$ for each core node appears. Given a core node, the sampling of the peripheral nodes will only depend on one column in $\FacMat{E}{n}$ that is indexed by $b(\V{r})$. Therefore, instead of storing the whole $\FacMat{E}{n}$, we only keep one column of it at a time. This requires extra $O(L_n)$ space and $O(2R^k)$ computation for each $n$ in $[N]$, which makes the high order possible. When k is small, we can directly store $\FacMat{E}{n}$ in exchange for speed.
+
 \section{Experiments}
-%
-%
-%
-%
-%
-We evaluate our algorithms on four real-world data sets:
-Delicious Bookmarks\footnote{http://www.delicious.com}(delicious),
-Last.FM\footnote{http://www.lastfm.com}(lastfm),
-MovieLens\footnote{http://www.grouplens.org}+IMDb\footnote{http://www.imdb.com}/Rotten Tomatoes\footnote{http://www.rottentomatoes.com}(ml-2k),
-and a larger MovieLens data(ml-10m).
-The first three are from~\cite{Cantador:RecSys2011} and the forth one is from ~\cite{Harper2015}.
-Following previous practice, users, items and tags that occur at least 5 times are used.
-Some statistics of the data sets after preprocessing are shown in \Table{Data}.
 
+We conducted several experiments to test the effectiveness of our sampling algorithms on several real world data sets. Four for tag recommendation application: Delicious Bookmarks\footnote{http://www.delicious.com}(Delicious), Last.FM\footnote{http://www.lastfm.com}(LastFM), MovieLens\footnote{http://www.grouplens.org}+IMDb\footnote{http://www.imdb.com}/Rotten Tomatoes\footnote{http://www.rottentomatoes.com}(ML-S), and a larger MovieLens data(ML-L). The first three are from~\cite{Cantador:RecSys2011} and the forth one is froms~\cite{Harper2015}. Beside, we have one for link prediction: dblp\footnote{http://dblp.uni-trier.de/db/}. More details about those data sets will be introduced in the subsequent subsections.
 
-\subsection{Data and Preprocessing}
+\subsection{Data Preprocessing}
 
-\begin{table}[!ht]
-	\centering
-	\begin{tabular}{|c|c|c|c|c|c|}
-		\hline
-		 DataSet  & User & Item  & Tag  &  top - 1   & top - 1000 \\ \hline
-		  ml-2k   & 456  & 1973  & 1222 & 81.5643  &  43.3850   \\
-		 ml-10m   & 993  & 3298  & 2555 & 88.7368  &  50.5948   \\
-		 lastfm   & 1348 & 6927  & 2132 & 234.7302 &  101.7950  \\
-		delicious & 1681 & 29540 & 7251 & 95.4723  &  40.8289   \\ \hline
-	\end{tabular}
-	\caption{Data Statistics}
+% TODO : check Schke2008Tag for core-based approach
+These data sets for tag recommendation are some tuples of $(u,i,t)$, which is a coordinate in tensor with each one means the $u$-th user has tagged the $i$-th item with $t$-th tag. Following previous practice\cite{Schke2008Tag}, a $p$-core processing with $p=5$ is used so that each user, item and tag occurs at least 5 tuples. And for link prediction, the actual tuple used is $(u,i,r^t_{ui})$, which means the total number of papers $r^t_{ui}$ by author $u$ at conference $i$ in year $t$.
+
+% TODO more citetions for BPTF
+We use the Bayesian Probabilistic Tensor Factorization (BPTF) approach to do collaborative filtering and optimize the pair-wise ranking function of Bayesian Personalized Ranking (BPR)~\cite{Rendle_BPR,Rendle_RTF} for tag recommendation data sets. The factor matrices are learned so that the observed entries have ranking scores that are higher than the unobserved ones. $R$ is set to 64 for tag recommendation. For dblp data set we follow \cite{AcarDunlavy09} to extract only the inproceedings from 1991 to 2007 and the same Alternating Least
+Squares (ALS) approach using the Tensor Toolbox\cite{TTB_Software,TTB_Sparse} for CP model is used with $R=50$.
+
+After getting the factor matrices, we run different algorithms to find the top entries. Some statistics of the data sets after preprocessing are shown in \Table{Data}.
+
+%TODO rewrite the table
+\begin{table*}[!t]
+	% increase table row spacing, adjust to taste
+	\renewcommand{\arraystretch}{1.3}
+	% if using array.sty, it might be a good idea to tweak the value of
+	% \extrL_aheight as needed to properly center the text within the cells
+	\caption{Statistics for each data set}
 	\label{table:Data}
-\end{table}
-To learn the factor matrices of CP decomposition,
-we optimize the pair-wise
-ranking function Bayesian Personalized Ranking (BPR)~\cite{Rendle_BPR,Rendle_RTF}.
-The factor matrices are learned so that the observed entries have ranking scores that are higher than the unobserved ones. 
-$R$ is set to 64. 
-After getting the factor matrices, 
-we run different algorithms to find the top entries of the tensor.
-
-\subsection{Results}
-\subsubsection{Accuracy and Time}
-
-\begin{figure}[!]
 	\centering
-	\includegraphics[width=3in]{./img/fig_recall}\\
+	% Some packages, such as MDW tools, offer better commands for making tables
+	% than the plain LaTeX2e tabular which is used here.
+	\begin{tabular}{c|c|c|c|c|c}
+	\hline
+		 DataSet  &    $\|\V{w}^1\|_1$     &    $\|\V{w}^2\|_1$     &    $\|\V{w}^3\|_1$     & Top-$1$  &  Top-1k  \\
+	\hline
+		  ML-S    & $1.3509\times 10^{9}$  & $7.3067\times 10^{9}$  & $6.4865\times 10^{10}$ & 81.5643  & 43.3850  \\
+		  ML-L    & $9.8383\times 10^{9}$  & $4.8203\times 10^{10}$ & $3.6893\times 10^{11}$ & 88.7368  & 50.5948  \\
+		 LastFM   & $6.8660\times 10^{10}$ & $6.4091\times 10^{10}$ & $9.4795\times 10^{12}$ & 234.7302 & 101.7950 \\
+		Delicious & $2.5191\times 10^{11}$ & $1.2185\times 10^{12}$ & $8.6824\times 10^{12}$ & 95.4723  & 40.8289  \\
+		  dblp    &  $1.1183\times10^{7}$  &  $3.8655\times10^{6}$  & $7.9704\times 10^{6}$  &  4.1895  &  2.4516  \\
+	\hline
+	\end{tabular}
+\end{table*}
+
+\subsection{Accuracy and Time}
+
+We present time and accuracy results for the each data set. To evaluate accuracy for finding the top-$t$ largest elements in prediction tensor, we plot recall, i.e. the percentage of top-$t$ entries identified, versus the number of samples. Our algorithm focus on the effectiveness of finding those values. The recall for $t\in\{1,10,100,1000\}$ as well as the running time are shown for each data sets . The time for exhaustive computing is also drawn as the baseline. Here we set $t'=s$ and focus on the performance of the sampling stage. For each $s$, we run the sampling algorithms 10 times and the average is reported.
+
+\begin{figure}[!tbh]
+	\centering
+	\subfloat[]{
+		\includegraphics[width=3.3in]{img/ML_S_BasicRecall}
+		\label{fig:BasicRecall:ML-S}
+	}\\
+	\subfloat[]{
+		\includegraphics[width=3.3in]{img/ML_L_BasicRecall}
+		\label{fig:BasicRecall:ML-L}
+	}\\
+	\subfloat[]{
+		\includegraphics[width=3.3in]{img/LastFM_BasicRecall}
+		\label{fig:BasicRecall:LastFM}
+	}\\
+	\subfloat[]{
+		\includegraphics[width=3.3in]{img/Delicious_BasicRecall}
+		\label{fig:BasicRecall:Delicious}
+	}\\
+	\subfloat[]{
+	\includegraphics[width=3.3in]{img/dblp_BasicRecall}
+	\label{fig:BasicRecall:dblp}
+	}
 	\caption{Recall of Core$^k$ sampling for $k\in\{1,2,3\}$.}
-	\label{fig:recall}
+	\label{fig:BasicRecall}
 \end{figure}
-\begin{figure}[!]
-	\centering
-	\includegraphics[width=3in,viewport = 10 10 600 400]{./img/fig_times}\\
-	\caption{Running time for the experiments in~\Fig{recall}.}
-	\label{fig:time}
-\end{figure}
-We present time and accuracy results for the four data sets in
-~\Fig{recall} and~\Fig{time}.
-In~\Fig{recall}, we plot recall, i.e. the percentage of the top-$t$ entries identified,
-versus the number of samples.
-The results for $t\in\{1,10,100,1000\}$ are shown.
-~\Fig{time} plots the computation time versus the number of samples.
-The time for exhaustive computing is also shown.
-Here we set $t'=s$ and focus on the performance of the sampling step.
-For each $s$, we run the sampling algorithms 10 times and the average of the recalls is reported.
 
-The results show that by extending the core partition to Core$^2$ and Core$^3$,
-we can get the same level of recalls with much fewer samples.
-In Core$^2$ we store the extension matrices for speeding up.
-This is consistent with our theoretical analysis that in Core$^k$ sampling,
-the focus on top entries is amplified,
-making them more probable to be sampled.
-All extensions are orders of magnitude faster than exhaustive computing.
+\begin{figure}[!tbh]
+	\centering
+	\subfloat[]{
+		\includegraphics[width=1.7in]{img/ML_S_BasicTime}
+		\label{fig:BasicTime:ML-S}
+	}
+	\subfloat[]{
+		\includegraphics[width=1.7in]{img/ML_L_BasicTime}
+		\label{fig:BasicTime:ML-L}
+	}\\
+	\subfloat[]{
+		\includegraphics[width=1.7in]{img/LastFM_BasicTime}
+		\label{fig:BasicTime:LastFM}
+	}
+	\subfloat[]{
+		\includegraphics[width=1.7in]{img/Delicious_BasicTime}
+		\label{fig:BasicTime:Delicious}
+	}\\
+	\subfloat[]{
+	\includegraphics[width=1.7in]{img/dblp_BasicTime}
+	\label{fig:BasicTime:dblp}
+	}
+	\caption{Running time for the experiments in~\Fig{BasicRecall}.}
+	\label{fig:BasicTime}
+\end{figure}
 
-\subsubsection{Use Prefiltering}
-We then evaluate the performance of using $\predx$ for prefiltering with $t'=s/10$.
-Due to space limit, we only show results on the lastfm data set in~\Fig{lastfm_budget}.
-Compared with the results in~\Fig{recall} and~\Fig{time},
-we notice that prefiltering leads to a slightly lower recall but less computation.
-\begin{figure}[H]
-	\centering
-	\subfloat[a]{\includegraphics[width=3in]{./img/fig_lastfm_recall_budget}}
-	\qquad
-	\subfloat[b]{\includegraphics[width=2.7in]{./img/fig_lastfm_times_budget}}
-	\caption{Recall and time of using prefiltering.
-		(a) Recall (b) Time.
-		We show the ratio of time used by $t'=s/10$ to that used by $t'=s$.}
-	\label{fig:lastfm_budget}
-\end{figure}
-\subsubsection{Sampling for Collaborative Filtering}
-In~\Fig{Queries}, we show the performance of~\Alg{QuerySampling}
-applied for collaborative filtering,
-where the samples are shared among different users.
-Here Core$^2$ sampling is used to find the top-100 largest entries for the lastfm data set
-and $s$ is set to $10^6$.
-We can see that only for the first few users we need some time to get the samples
-and build the sample pools.
-After that, the computation time for a new user is much reduced.
-\begin{figure}[!]
-	\centering
-	\includegraphics[width=2.7in]{./img/fig_lastfm_queries}\\
-	\caption{Recall and time results of~\Alg{QuerySampling} for the lastfm data set.
-		For better visualization, we show one result for every $10$ users.}
-	\label{fig:Queries}
-\end{figure}
-\subsubsection{Comparison to Diamond Sampling}
+\subsubsection{MovieLens}
+Here we have two data sets of MovieLens, ML-S and a larger one ML-L. ML-S contains $L_1 = 456$ users, $L_2 = 1,973$ items and $L_3 = 1,222$ tags and ML-L consists of $L_1 = 993$ users, $L_2 = 3,298$ items and $L_3 = 2,555$ tags. The most used latent dimension in practice is $R=\{16,32,64\}$ since the complexity of model with large $R$ may over-fits the training set and takes more time to train. So we use $R=64$ for the all tag recommendation data sets.
+
+The performances of recall on ML-S and ML-L are shown in~\Fig{BasicRecall:ML-S} and~\Fig{BasicRecall:ML-L}. And~\Fig{BasicTime:ML-S} and \Fig{BasicTime:ML-L} show the corresponding running time. The results show that by extending the core partition to Core$^2$ and Core$^3$, we can get the same level of recalls with much fewer samples. In Core$^2$ we store the extension matrices for speeding up.
+
+As show in our theoretical analysis, approximate sample number $s\geq\ln(1/\sigma)/p(\epsilon_{\V{i}})$ is demand for finding $x_\V{i}^*$, where $x_\V{i}^*$ is the reconstructed value at $\V{i}$ with absolute of original factor matrices. Since $x_\V{i}^*\geq x_\V{i}$ and $p(\epsilon_{\V{i}})=\norm{\V{w}}{1}/x_\V{i}^*$, we use $x_\V{i}$ to do evaluation on all data set. If we set $\sigma=0.1$, the least sample number for \{Core$^1$,Core$^2$,Core$^3$\} on finding the top-$1000$ are \{$7.1697\times10^7,8.9384\times10^6,1.8290\times10^6$\}for ML-S and $\{4.4774\times10^8,4.3359\times10^7,6.5591\times10^6\}$ for ML-L. This is consistent with our theoretical analysis that in Core$^k$ sampling, the focus on top entries is amplified, making them more probable to be sampled. All extensions are orders of magnitude faster than exhaustive computing.
+
+The running time costs more for Core$^3$ than Core$^2$ and Core$^1$. And with increasing of sample numbers high order extension may outperform in both recall and time-consuming. This is because although the algorithm with high order extension takes much more time in computing the extension matrices or probability vectors. With high order extension the probabilities for larger entities are emphasized, causing the smaller size of $\Psi_p$ which saving the running time in filtering phase.
+
+\subsubsection{LastFM}
+
+LastFM has $L_1 = 1,348$ users, $L_2 = 6,927$ items and $L_3 = 2,132$ tags. The performance on LastFM is shown in~\Fig{BasicRecall:LastFM} and~\Fig{BasicTime:LastFM}. This also shows the consistent results on the effectiveness of our algorithms. Beside we use the LastFM data set to show more details in running time. For convenience, we separate its running time into four simple phases: initialization, sampling, scoring and filtering. Initialization stage consists the preprocessing for factor matrices and computing the weight of nodes in core partition. The sampling stage is for sampling indices which may including computing the probability distribution of the peripheral partition nodes when extension matrices is not stored previously. The scoring phase shows the time consumed for scoring each sampled index tuples and saving it into containers. The last processing phase is filtering the top-$t$ entities within all sampled index tuples. We plot the result in~\Fig{BasicTimeComp}.
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=3in,viewport = 00 20 460 265]{./img/fig_lastfm_comparision_recall}\\
-	\caption{Comparison with diamond sampling for the lastfm data set.}
+	\subfloat[Sampling wiht $s=1e6$]{
+		\includegraphics[width=1.7in]{LastFM_BasicTimeComp_S}
+		\label{fig:BasicTimeComp:S}
+	}
+	\subfloat[Sampling wiht $s=1e8$]{
+		\includegraphics[width=1.7in]{LastFM_BasicTimeComp_L}
+		\label{fig:BasicTimeComp:L}
+	}
+	\caption{Running time for in each phases on LastFM data set.}
+	\label{fig:BasicTimeComp}
+\end{figure}
+
+The running time for initialization is independent of sample numbers. As we can see in~\Fig{BasicTimeComp:S}, when $s$ is small Core$^3$ takes much more time in initialization and sampling stage and the extra time costing in sampling stage is due to the computation for probability vectors which takes extra $O(R^3)$ than using extension matrices for saving storage. With the growth of sample numbers, the initialization costs is much feeble and Core$^3$ saves time in scoring and filtering stages causing in the smaller set of $\Psi_p$.
+
+\subsubsection{Delicious}
+Delicious has $L_1 = 1,681$ users, $L_2 = 29,540$ items and $L_3 = 7,251$ tags.The performance on Delicious is shown in~\Fig{BasicRecall:Delicious} and~\Fig{BasicTime:Delicious}. And we also set $\sigma=0.1$ to compute the demand sample number for each algorithm. It shows $\{1.4207\times10^{10},1.6831\times10^9,2.9373\times10^8\}$ is demanded for finding the top-$1000$ in algorithm \{Core$^1$,Core$^2$,Core$^3$\}. 
+
+\subsubsection{dblp}
+
+dblp has $L_1 = 43,928$ authors, $L_2 = 2,572$ conferences and $L_3 = 17$ year slices. The high order extension also shows its ability to enhance the results. And for small data set, a low order extension algorithm is enough to handle.
+
+\subsection{Use Prefiltering}
+Since the score is used to estimate $x_\V{i}$, $\predx$ can be used to save the running time on filtering phase. We then evaluate the performance of using $\predx$ for prefiltering with $t'=s/10$. We show results on the LastFM data set in~\Fig{PrefilterRecallLastFM} and~\Fig{PrefilterTimeLastFM}. We notice that prefiltering leads to a slightly lower recall but less computation. Prefiltering save a mount of time since the load for $\predx$ is much lighter than computing all $x_\V{i}$ in $\Psi_p$. A slightly more time costs in scoring phase of prefiltering strategy is result of skipping the computation of scores $\score{\ell}$ when direct computing is conducted.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=3.3in]{./img/PrefilterRecallLastFM}
+	\caption{Compare to the recall of using prefiltering.}
+	\label{fig:PrefilterRecallLastFM}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\subfloat[a]{\includegraphics[width=3in]{./PrefilterTimeLastFM_a}}\qquad
+	\subfloat[b]{\includegraphics[width=3in]{./PrefilterTimeLastFM_b}}\qquad
+	\subfloat[a]{\includegraphics[width=3in]{./PrefilterTimeLastFM_c}}
+	\caption{Recall and time of using prefiltering.
+		(a) Running time at $s=1e6$. (b) Running time at $s=1e7$. (c) Running time at $s=1e8$.}
+	\label{fig:PrefilterTimeLastFM}
+\end{figure}
+
+\subsection{Sampling for Collaborative Filtering}
+
+In~\Fig{MutilUsers}, we show the performance of~\Alg{MultiUsersSampling} applied for collaborative filtering, where the samples are shared among different users. Here Core$^2$ sampling is used to find the top-100 largest entries for the LastFM data set and $s$ is set to $10^6$. We can see that only for the first few users we need some time to get the samples and build the sample pools. After that, the computation time for a new user is much reduced.
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=2.7in]{./LastFM_MultiUsers}\\
+	\caption{Recall and time results of~\Alg{MultiUsersSampling} on the LastFM data set.}
+	\label{fig:MutilUsers}
+\end{figure}
+
+\subsection{Comparison with Diamond Sampling}
+
+We also compare our algorithms with diamond sampling~\cite{BaPiKoSe15} for finding the top entries in the product of two matrices. For each user, we multiply the vector into the item matrix to get a user-oriented item matrix. The problem is to identify the top entries in the product of the item matrix and the tag matrix. Note that the searchings for different users are conducted independently, i.e. we run~\Alg{CorekSampling} instead of~\Alg{MultiUsersSampling} for this experiment. 
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=3in]{./ML_L_CompDiamondRecall}\\
+	\caption{Comparison with Diamond sampling for the ML-L data set.}
 	\label{fig:Comparison_recall}
 \end{figure}
+
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=2.7in,viewport = 0 10 450 180]{./img/fig_lastfm_comparison_times}\\
-	\caption{Running time for the experiments in~\Fig{Comparison_recall}.}
+	\includegraphics[width=2.7in]{./ML_L_CompDiamondTime}\\
+	\caption{Running time for Diamond, Core$^1$, Core$^2$ and Core$^3$.}
 	\label{fig:Comparison_time}
 \end{figure}
-We also compare our algorithms with diamond sampling~\cite{BaPiKoSe15}
-for finding the top entries in the product of two matrices.
-For each user, we multiply the vector characterizing it into the item matrix
-to get a user-oriented item matrix.
-The problem is to identify the top entries in the product of the item matrix and the tag matrix.
-Note that the searchings for different users are conducted independently,
-i.e. we run~\Alg{CoreExtensionSampling} instead of~\Alg{QuerySampling} for this experiment.
-We show the recalls and the time consumed by the sampling algorithms for the lastfm data set
-in~\Fig{Comparison_recall} and~\Fig{Comparison_time}.
-$t'$ is set to $s/10$.
-The performance of diamond sampling is better than Core$^1$ sampling.
-This is reasonable since the score $\hat{x}_{\V{i}}$ it computed is proportional to the square of the entry magnitude.
-However, Core$^2$ and Core$^3$ extensions achieve higher recalls than diamond sampling with the same number of samples.
-This illustrates the advantage of augmenting the sampling probability to higher power of the entry magnitude.
+We show the recalls and the time consumed by the sampling algorithms for the ML-L data set in~\Fig{Comparison_recall} and~\Fig{Comparison_time}, in which $t'$ is set to $s/10$. The performance of diamond sampling is better than Core$^1$ sampling. This is reasonable since the score $\hat{x}_{\V{i}}$ that the diamond sampling computed is proportional to the square of the entry magnitude. However, Core$^2$ and Core$^3$ extensions achieve higher recalls than diamond sampling with the same number of samples. This illustrates the advantage of augmenting the sampling probability to higher power of the entry magnitude.
 
-\subsubsection{Accuracy of the Scores}
-The $\predx$ is an estimation of $sx^k_{\V{i}}/\norm{\V{w}}{1}$ in Core$^k$ extension.
-We experimentally validate this analysis.
-We test on the lastfm data set with $k=3$ and $s=10^8$.
-The $x$ and $y$ axes correspond to $\norm{\V{w}}{1}\hat{x}_{\V{i}}/s$ and $x^3_{\V{i}}$ respectively. 
-Only the $10^4$ pairs with largest actual values that be sampled are shown in~\Figs{ml_2k_est}{delicious_est}.
-\begin{figure}[H]
+\subsection{Accuracy of the Scores}
+
+Since the $\predx$ is an estimation of $sx^k_{\V{i}}/\norm{\V{w}}{1}$ in Core$^k$ extension. We experimentally validate this analysis. We test on the ML-S and LastFM data set with $k=3$ and $s=10^8$. And the pairs $(x^3_{\V{i}},\norm{\V{w}}{1}\hat{x}_{\V{i}}/s)$ is plotted in~\Fig{MLSEstimation} and ~\Fig{MLSEstimation}. In both only the $10^4$ pairs with largest $x^3_{\V{i}}$ in sampled index tuple set $\Psi_p$ are shown. 
+\begin{figure}[!ht]
 	\centering
 	% Requires \usepackage{graphicx}
-	\includegraphics[width=3in]{./img/fig_ml_2k_est}\\
-	\caption{Plot of pairs $(\norm{\V{w}}{1}\hat{x}_{\V{i}}/s,x^3_{\V{i}})$.
-		The deshed line is the reference for equality.}
-	\label{fig:ml_2k_est}
+	\includegraphics[width=3in]{./ML_S_Estimation}\\
+	\caption{Plot of pairs $(\norm{\V{w}}{1}\hat{x}_{\V{i}}/s,x^3_{\V{i}})$ on ML-S.
+		The solid line is the reference for equality.}
+	\label{fig:MLSEstimation}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[!ht]
 	\centering
 	% Requires \usepackage{graphicx}
-	\includegraphics[width=3in]{./img/fig_ml_10m_est}\\
-	\caption{Plot of pairs $(\norm{\V{w}}{1}\hat{x}_{\V{i}}/s,x^3_{\V{i}})$.
-		The deshed line is the reference for equality.}
-	\label{fig:ml_10m_est}
-\end{figure}
-\begin{figure}[H]
-	\centering
-	% Requires \usepackage{graphicx}
-	\includegraphics[width=3in]{./img/fig_lastfm_est}\\
-	\caption{Plot of pairs $(\norm{\V{w}}{1}\hat{x}_{\V{i}}/s,x^3_{\V{i}})$.
-		The deshed line is the reference for equality.}
-	\label{fig:lastfm_est}
-\end{figure}
-\begin{figure}[H]
-	\centering
-	% Requires \usepackage{graphicx}
-	\includegraphics[width=3in]{./img/fig_delicious_est}\\
-	\caption{Plot of pairs $(\norm{\V{w}}{1}\hat{x}_{\V{i}}/s,x^3_{\V{i}})$.
-		The deshed line is the reference for equality.}
-	\label{fig:delicious_est}
+	\includegraphics[width=3in]{./LastFM_Estimation}\\
+	\caption{Plot of pairs $(\norm{\V{w}}{1}\hat{x}_{\V{i}}/s,x^3_{\V{i}})$ on LastFM.
+		The solid line is the reference for equality.}
+	\label{fig:LastFMEstimation}
 \end{figure}
 
-As expected, the points concentrate around the diagonal, 
-which confirmed with the theoretical result.
-
-
-\section{}
-\section{Conclusion}
-
-
+By~\Theo{Bound}, if sample number $s \geq 3\norm{\V{w}}{1}\log{(2/\sigma)}/(\delta^2 x^k_{\V{i}})$ we can get $Pr(|\predx\norm{\V{W}}{1}/s - x^k_{\V{i}}| > \delta x^k_{\V{i}}) \leq \sigma$. We fix $\sigma=0.1$, at the result of $s=1e8$, we compute each $\delta$ for $x^k_{\V{i}}$ use the equality. And two dashed lines for $x^k_{\V{i}}\pm\delta x^k_{\V{i}}$ is also plotted. As expected, the points concentrate around the diagonal and most pairs fall within the two dashed lines, which confirmed with the theoretical result.
 
 
 % if have a single appendix:
@@ -1530,27 +1358,27 @@ which confirmed with the theoretical result.
 %
 
 
-\appendices
-\section{Proof of the First Zonklar Equation}
-Appendix one text goes here.
+%\appendices
+%\section{Proof of the First Zonklar Equation}
+%Appendix one text goes here.
 
 % you can choose not to have a title for an appendix
 % if you want by leaving the argument blank
-\section{}
-Appendix two text goes here.
+%\section{}
+%Appendix two text goes here.
 
 
 % use section* for acknowledgment
 \ifCLASSOPTIONcompsoc
   % The Computer Society usually uses the plural form
-  \section*{Acknowledgments}
+%  \section*{Acknowledgments}
 \else
   % regular IEEE prefers the singular form
-  \section*{Acknowledgment}
+%  \section*{Acknowledgment}
 \fi
 
 
-The authors would like to thank...
+%The authors would like to thank...
 
 
 % Can use something like this to put references on a page
@@ -1636,5 +1464,3 @@ The authors would like to thank...
 
 % that's all folks
 \end{document}
-
-
