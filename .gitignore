@@ -1,4 +1,10 @@
 /bin
+/standalone/star_sampling
+/standalone/prepare_data
+/standalone/factorize
+/standalone/matrix_benchmark
+/results/
+/paper/
 /data
 /doc
 /.vscode
