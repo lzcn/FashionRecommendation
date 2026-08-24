@@ -21,7 +21,7 @@ numeric arrays used to produce them.
 - Manuscript LaTeX and PDF, including the experiment settings and Figures 3-9.
 - MATLAB MEX/C++ implementations of Core^1, Core^2, Core^3, exhaustive search,
   prefiltering, multi-user sampling, and diamond sampling.
-- New standalone implementation in `standalone/star_sampling.cpp`.
+- New standalone implementation in `src/star_sampling.cpp`.
 - Official GroupLens raw archives and the standalone iterative 5-core converter.
 - Deleted experiment drivers and result artifacts found in Git history.
 - Ten fixed-seed repeats for each point in `results/scale/benchmark.csv` and
@@ -163,7 +163,7 @@ filtering produced:
 
 This confirms the original raw sources and preprocessing rule for three of the
 four in-scope tag data sets. DBLP was excluded at the user's request. Full source
-URLs, hashes, commands, and retained-row counts are in `standalone/DATASETS.md`.
+URLs, hashes, commands, and retained-row counts are in `docs/DATASETS.md`.
 
 ## Implementation and manuscript findings
 

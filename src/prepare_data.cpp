@@ -4,10 +4,8 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <set>
 #include <stdexcept>
 #include <string>
-#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -69,7 +67,6 @@ int main(int argc, char** argv) try {
   std::string format = "tsv";
   std::size_t minimum = 5;
   bool lowercase_tags = false;
-  bool legacy_mex_core = false;
   for (int i = 1; i < argc; ++i) {
     const std::string arg = argv[i];
     auto next = [&]() -> std::string {
@@ -81,11 +78,10 @@ int main(int argc, char** argv) try {
     else if (arg == "--format") format = next();
     else if (arg == "--min-count") minimum = std::stoull(next());
     else if (arg == "--lowercase-tags") lowercase_tags = true;
-    else if (arg == "--legacy-mex-core") legacy_mex_core = true;
     else if (arg == "--help") {
       std::cout << "Usage: prepare_data --input FILE --output FILE "
                    "[--format tsv|ml10m|ml20m] [--min-count 5] "
-                   "[--lowercase-tags] [--legacy-mex-core]\n";
+                   "[--lowercase-tags]\n";
       return 0;
     } else {
       throw std::runtime_error("unknown option: " + arg);
@@ -123,57 +119,25 @@ int main(int argc, char** argv) try {
   }
 
   std::size_t iteration = 0;
-  if (legacy_mex_core) {
+  while (true) {
     std::unordered_map<std::string, std::size_t> users, items, tags;
-    std::set<std::tuple<std::string, std::string, std::string>> unique;
     for (const auto& x : triples) {
+      if (!x.active) continue;
       ++users[x.user];
       ++items[x.item];
       ++tags[x.tag];
-      unique.emplace(x.user, x.item, x.tag);
     }
-    triples.clear();
-    triples.reserve(unique.size());
-    for (const auto& x : unique) {
-      triples.push_back({std::get<0>(x), std::get<1>(x), std::get<2>(x), true});
-    }
-    while (true) {
-      std::size_t removed = 0;
-      for (auto& x : triples) {
-        if (!x.active) continue;
-        if (users[x.user] < minimum || items[x.item] < minimum ||
-            tags[x.tag] < minimum) {
-          x.active = false;
-          --users[x.user];
-          --items[x.item];
-          --tags[x.tag];
-          ++removed;
-        }
+    std::size_t removed = 0;
+    for (auto& x : triples) {
+      if (!x.active) continue;
+      if (users[x.user] < minimum || items[x.item] < minimum ||
+          tags[x.tag] < minimum) {
+        x.active = false;
+        ++removed;
       }
-      ++iteration;
-      if (removed == 0) break;
     }
-  } else {
-    while (true) {
-      std::unordered_map<std::string, std::size_t> users, items, tags;
-      for (const auto& x : triples) {
-        if (!x.active) continue;
-        ++users[x.user];
-        ++items[x.item];
-        ++tags[x.tag];
-      }
-      std::size_t removed = 0;
-      for (auto& x : triples) {
-        if (!x.active) continue;
-        if (users[x.user] < minimum || items[x.item] < minimum ||
-            tags[x.tag] < minimum) {
-          x.active = false;
-          ++removed;
-        }
-      }
-      ++iteration;
-      if (removed == 0) break;
-    }
+    ++iteration;
+    if (removed == 0) break;
   }
 
   std::unordered_map<std::string, std::size_t> users, items, tags;

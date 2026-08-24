@@ -39,6 +39,8 @@ struct Post {
   std::uint32_t item = 0;
   std::vector<std::uint32_t> positives;
   std::unordered_set<std::uint32_t> positive_set;
+
+  bool is_positive(std::uint32_t tag) const { return positive_set.count(tag) != 0; }
 };
 
 struct Options {
@@ -52,9 +54,6 @@ struct Options {
   double init_scale = 1.0;
   std::string init_distribution = "uniform";
   std::uint64_t seed = 2017;
-  std::string loss = "legacy-auc";
-  std::string negative_mode = "sampled";
-  std::string optimizer = "pairwise";
   bool self_test = false;
 };
 
@@ -153,8 +152,7 @@ static void update_pair(Matrix& users, Matrix& items, Matrix& tags,
     difference += users(u, r) * items(i, r) * (tags(pos, r) - tags(neg, r));
   }
   const double probability = sigmoid(difference);
-  const double coefficient = options.loss == "bpr" ? 1.0 - probability
-                                                     : probability * (1.0 - probability);
+  const double coefficient = 1.0 - probability;
   for (std::size_t r = 0; r < users.cols; ++r) {
     const double old_u = users(u, r);
     const double old_i = items(i, r);
@@ -172,75 +170,10 @@ static void update_pair(Matrix& users, Matrix& items, Matrix& tags,
     tags(neg, r) += options.learning_rate *
                     (-coefficient * pair_product - options.regularization * old_neg);
   }
-  metrics.objective += options.loss == "bpr"
-                           ? std::log(std::max(probability, 1e-15))
-                           : probability;
+  metrics.objective += std::log(std::max(probability, 1e-15));
   metrics.mean_probability += probability;
   metrics.pair_accuracy += difference > 0.0 ? 1.0 : 0.0;
   ++metrics.pairs;
-}
-
-// Reproduce the released MEX update: aggregate every positive-negative tag
-// pair for one (user,item) post, divide by z=|T+||T-|, then update once.
-static void update_post_legacy_batch(Matrix& users, Matrix& items, Matrix& tags,
-                                     const Post& post, const Options& options,
-                                     EpochMetrics& metrics) {
-  std::vector<std::uint32_t> negatives;
-  negatives.reserve(tags.rows - post.positives.size());
-  for (std::uint32_t tag = 0; tag < tags.rows; ++tag) {
-    if (!post.positive_set.count(tag)) negatives.push_back(tag);
-  }
-  if (post.positives.empty() || negatives.empty()) return;
-  const double z = static_cast<double>(post.positives.size()) * negatives.size();
-  std::vector<double> inter_v(users.cols, 0.0);
-  std::vector<double> inter_q(users.cols, 0.0);
-  std::vector<double> positive_sum(post.positives.size(), 0.0);
-  std::vector<double> negative_sum(negatives.size(), 0.0);
-  for (std::size_t p = 0; p < post.positives.size(); ++p) {
-    const std::uint32_t pos = post.positives[p];
-    for (std::size_t n = 0; n < negatives.size(); ++n) {
-      const std::uint32_t neg = negatives[n];
-      double difference = 0.0;
-      for (std::size_t r = 0; r < users.cols; ++r) {
-        difference += users(post.user, r) * items(post.item, r) *
-                      (tags(pos, r) - tags(neg, r));
-      }
-      const double probability = sigmoid(difference);
-      const double coefficient = probability * (1.0 - probability);
-      positive_sum[p] += coefficient;
-      negative_sum[n] += coefficient;
-      for (std::size_t r = 0; r < users.cols; ++r) {
-        inter_v[r] += coefficient * (tags(pos, r) - tags(neg, r));
-      }
-      metrics.objective += probability;
-      metrics.mean_probability += probability;
-      metrics.pair_accuracy += difference > 0.0 ? 1.0 : 0.0;
-      ++metrics.pairs;
-    }
-  }
-  for (std::size_t r = 0; r < users.cols; ++r) {
-    const double old_u = users(post.user, r);
-    const double old_i = items(post.item, r);
-    inter_q[r] = old_u * old_i;
-    users(post.user, r) += options.learning_rate *
-        (old_i * inter_v[r] / z - options.regularization * old_u);
-    items(post.item, r) += options.learning_rate *
-        (old_u * inter_v[r] / z - options.regularization * old_i);
-  }
-  for (std::size_t p = 0; p < post.positives.size(); ++p) {
-    for (std::size_t r = 0; r < users.cols; ++r) {
-      const auto pos = post.positives[p];
-      tags(pos, r) += options.learning_rate *
-          (inter_q[r] * positive_sum[p] / z - options.regularization * tags(pos, r));
-    }
-  }
-  for (std::size_t n = 0; n < negatives.size(); ++n) {
-    for (std::size_t r = 0; r < users.cols; ++r) {
-      const auto neg = negatives[n];
-      tags(neg, r) += options.learning_rate *
-          (-inter_q[r] * negative_sum[n] / z - options.regularization * tags(neg, r));
-    }
-  }
 }
 
 static std::uint32_t sample_negative(const Post& post, std::size_t tag_count,
@@ -253,7 +186,7 @@ static std::uint32_t sample_negative(const Post& post, std::size_t tag_count,
   std::uint32_t tag = 0;
   do {
     tag = distribution(rng);
-  } while (post.positive_set.count(tag));
+  } while (post.is_positive(tag));
   return tag;
 }
 
@@ -288,17 +221,12 @@ static Options parse_options(int argc, char** argv) {
     else if (arg == "--init-scale") options.init_scale = std::stod(next());
     else if (arg == "--init-distribution") options.init_distribution = next();
     else if (arg == "--seed") options.seed = std::stoull(next());
-    else if (arg == "--loss") options.loss = next();
-    else if (arg == "--negative-mode") options.negative_mode = next();
-    else if (arg == "--optimizer") options.optimizer = next();
     else if (arg == "--self-test") options.self_test = true;
     else if (arg == "--help") {
       std::cout << "Usage: factorize --input triples.csv --output-dir DIR [options]\n"
                    "  --rank 64 --epochs 20 --negatives 1 --learning-rate 0.1\n"
                    "  --regularization 1e-6 --init-scale 1 --seed 2017\n"
-                   "  --init-distribution uniform|normal\n"
-                   "  --loss bpr|legacy-auc --negative-mode sampled|all\n"
-                   "  --optimizer pairwise|legacy-batch\n";
+                   "  --init-distribution uniform|normal\n";
       std::exit(0);
     } else {
       throw std::runtime_error("unknown option: " + arg);
@@ -309,15 +237,6 @@ static Options parse_options(int argc, char** argv) {
       options.learning_rate <= 0.0 || options.regularization < 0.0 ||
       options.init_scale <= 0.0) {
     throw std::runtime_error("invalid non-positive training option");
-  }
-  if (options.loss != "bpr" && options.loss != "legacy-auc") {
-    throw std::runtime_error("--loss must be bpr or legacy-auc");
-  }
-  if (options.negative_mode != "sampled" && options.negative_mode != "all") {
-    throw std::runtime_error("--negative-mode must be sampled or all");
-  }
-  if (options.optimizer != "pairwise" && options.optimizer != "legacy-batch") {
-    throw std::runtime_error("--optimizer must be pairwise or legacy-batch");
   }
   if (options.init_distribution != "uniform" &&
       options.init_distribution != "normal") {
@@ -331,7 +250,6 @@ static int self_test() {
   options.rank = 4;
   options.epochs = 25;
   options.learning_rate = 0.05;
-  options.loss = "bpr";
   std::vector<Triple> triples{{0, 0, 0}, {0, 1, 0}, {1, 0, 1}, {1, 1, 1}};
   const auto posts = make_posts(triples);
   std::mt19937_64 rng(7);
@@ -354,13 +272,6 @@ static int self_test() {
   if (!(last > first) || !std::all_of(users.values.begin(), users.values.end(),
                                       [](double x) { return std::isfinite(x); })) {
     std::cerr << "factorize self-test failed\n";
-    return 1;
-  }
-  EpochMetrics legacy_metrics;
-  update_post_legacy_batch(users, items, tags, posts.front(), options,
-                           legacy_metrics);
-  if (legacy_metrics.pairs != 2 || !std::isfinite(legacy_metrics.objective)) {
-    std::cerr << "factorize self-test failed: legacy batch update\n";
     return 1;
   }
   std::cout << "factorize self-test passed: probability " << first << " -> " << last << '\n';
@@ -391,30 +302,15 @@ int main(int argc, char** argv) try {
             << " rank=" << options.rank << '\n';
   for (std::size_t epoch = 0; epoch < options.epochs; ++epoch) {
     const auto start = Clock::now();
-    if (options.optimizer == "pairwise") {
-      std::shuffle(order.begin(), order.end(), rng);
-    }
+    std::shuffle(order.begin(), order.end(), rng);
     EpochMetrics metrics;
     for (std::size_t post_index : order) {
       const auto& post = posts[post_index];
-      if (options.optimizer == "legacy-batch") {
-        update_post_legacy_batch(users, items, tags, post, options, metrics);
-        continue;
-      }
       for (std::uint32_t pos : post.positives) {
-        if (options.negative_mode == "all") {
-          for (std::uint32_t neg = 0; neg < tags.rows; ++neg) {
-            if (!post.positive_set.count(neg)) {
-              update_pair(users, items, tags, post.user, post.item, pos, neg,
-                          options, metrics);
-            }
-          }
-        } else {
-          for (std::size_t n = 0; n < options.negatives; ++n) {
-            const auto neg = sample_negative(post, tags.rows, rng);
-            update_pair(users, items, tags, post.user, post.item, pos, neg,
-                        options, metrics);
-          }
+        for (std::size_t n = 0; n < options.negatives; ++n) {
+          const auto neg = sample_negative(post, tags.rows, rng);
+          update_pair(users, items, tags, post.user, post.item, pos, neg,
+                      options, metrics);
         }
       }
     }
@@ -441,10 +337,7 @@ int main(int argc, char** argv) try {
            << "regularization=" << options.regularization << '\n'
            << "init_scale=" << options.init_scale << '\n'
            << "init_distribution=" << options.init_distribution << '\n'
-           << "seed=" << options.seed << '\n'
-           << "loss=" << options.loss << '\n'
-           << "negative_mode=" << options.negative_mode << '\n'
-           << "optimizer=" << options.optimizer << '\n';
+           << "seed=" << options.seed << '\n';
   std::cout << "wrote factors to " << options.output_dir << '\n';
   return 0;
 } catch (const std::exception& e) {

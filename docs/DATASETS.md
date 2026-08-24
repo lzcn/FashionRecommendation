@@ -37,7 +37,7 @@ dimensions.
 Example:
 
 ```sh
-./standalone/prepare_data \
+build/default/prepare_data \
   --input data/raw/hetrec2011-lastfm-2k/user_taggedartists.dat \
   --output data/processed/lastfm/triples.csv \
   --min-count 5
