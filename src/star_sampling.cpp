@@ -18,31 +18,10 @@
 #include <unordered_set>
 #include <vector>
 
+#include "common.hpp"
+
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
-
-struct Matrix {
-  std::size_t rows = 0, cols = 0;
-  std::vector<double> values;
-  double operator()(std::size_t i, std::size_t r) const {
-    return values[i * cols + r];
-  }
-};
-
-struct Entry {
-  std::uint64_t index = 0;
-  double value = 0.0;
-};
-
-struct Timings {
-  double initialization = 0.0;
-  double sampling = 0.0;
-  double scoring = 0.0;
-  double filtering = 0.0;
-  double total() const {
-    return initialization + sampling + scoring + filtering;
-  }
-};
 
 struct SampleResult {
   std::vector<Entry> top;
@@ -63,136 +42,6 @@ struct Options {
   std::string output_dir = "results/standalone";
   bool self_test = false;
 };
-
-static double seconds(Clock::time_point start) {
-  return std::chrono::duration<double>(Clock::now() - start).count();
-}
-
-static std::uint64_t encode(std::size_t i, std::size_t j, std::size_t k,
-                            const std::array<std::size_t, 3>& dims) {
-  return (static_cast<std::uint64_t>(i) * dims[1] + j) * dims[2] + k;
-}
-
-static std::array<std::size_t, 3> decode(
-    std::uint64_t x, const std::array<std::size_t, 3>& dims) {
-  const std::size_t k = x % dims[2];
-  x /= dims[2];
-  const std::size_t j = x % dims[1];
-  return {static_cast<std::size_t>(x / dims[1]), j, k};
-}
-
-static double cp_value(const std::array<Matrix, 3>& a, std::size_t i,
-                       std::size_t j, std::size_t k) {
-  double value = 0.0;
-  for (std::size_t r = 0; r < a[0].cols; ++r) {
-    value += a[0](i, r) * a[1](j, r) * a[2](k, r);
-  }
-  return value;
-}
-
-static Matrix load_matrix(const fs::path& path) {
-  std::ifstream in(path);
-  if (!in) throw std::runtime_error("cannot open factor matrix: " + path.string());
-  Matrix out;
-  std::string line;
-  while (std::getline(in, line)) {
-    if (line.empty() || line[0] == '#') continue;
-    std::replace(line.begin(), line.end(), ',', ' ');
-    std::istringstream row(line);
-    std::vector<double> parsed;
-    double value = 0.0;
-    while (row >> value) parsed.push_back(value);
-    if (parsed.empty()) continue;
-    if (out.cols == 0) out.cols = parsed.size();
-    if (parsed.size() != out.cols) {
-      throw std::runtime_error("ragged factor matrix: " + path.string());
-    }
-    out.values.insert(out.values.end(), parsed.begin(), parsed.end());
-    ++out.rows;
-  }
-  if (out.rows == 0 || out.cols == 0) {
-    throw std::runtime_error("empty factor matrix: " + path.string());
-  }
-  return out;
-}
-
-static std::array<Matrix, 3> generate_factors(
-    const std::array<std::size_t, 3>& dims, std::size_t rank,
-    std::uint64_t seed) {
-  std::mt19937_64 rng(seed);
-  std::lognormal_distribution<double> distribution(-0.25, 0.70);
-  std::array<Matrix, 3> factors;
-  for (std::size_t n = 0; n < 3; ++n) {
-    factors[n].rows = dims[n];
-    factors[n].cols = rank;
-    factors[n].values.resize(dims[n] * rank);
-    for (double& x : factors[n].values) x = distribution(rng);
-    // A few consistently strong rows make the maximum-search problem nontrivial
-    // while retaining a known, reproducible heavy tail.
-    for (std::size_t i = 0; i < std::min<std::size_t>(3, dims[n]); ++i) {
-      const double boost = 1.8 - 0.25 * static_cast<double>(i);
-      for (std::size_t r = 0; r < rank; ++r) {
-        factors[n].values[i * rank + r] *= boost;
-      }
-    }
-  }
-  return factors;
-}
-
-static std::vector<Entry> exact_top(const std::array<Matrix, 3>& factors,
-                                    std::size_t top) {
-  struct MinValue {
-    bool operator()(const Entry& x, const Entry& y) const {
-      return x.value > y.value;
-    }
-  };
-  std::priority_queue<Entry, std::vector<Entry>, MinValue> heap;
-  const std::array<std::size_t, 3> dims{
-      factors[0].rows, factors[1].rows, factors[2].rows};
-  for (std::size_t i = 0; i < dims[0]; ++i) {
-    for (std::size_t j = 0; j < dims[1]; ++j) {
-      for (std::size_t k = 0; k < dims[2]; ++k) {
-        Entry e{encode(i, j, k, dims), cp_value(factors, i, j, k)};
-        if (heap.size() < top) {
-          heap.push(e);
-        } else if (e.value > heap.top().value) {
-          heap.pop();
-          heap.push(e);
-        }
-      }
-    }
-  }
-  std::vector<Entry> result;
-  while (!heap.empty()) {
-    result.push_back(heap.top());
-    heap.pop();
-  }
-  std::sort(result.begin(), result.end(), [](const Entry& x, const Entry& y) {
-    return x.value != y.value ? x.value > y.value : x.index < y.index;
-  });
-  return result;
-}
-
-static std::vector<std::size_t> core_tuple(std::size_t code, std::size_t rank,
-                                           unsigned power) {
-  std::vector<std::size_t> tuple(power);
-  for (unsigned p = 0; p < power; ++p) {
-    tuple[power - 1 - p] = code % rank;
-    code /= rank;
-  }
-  return tuple;
-}
-
-static int sign(double x) { return x < 0.0 ? -1 : 1; }
-
-static std::vector<double> compound_edge(const Matrix& factor,
-                                         const std::vector<std::size_t>& tuple) {
-  std::vector<double> edge(factor.rows, 1.0);
-  for (std::size_t i = 0; i < factor.rows; ++i) {
-    for (std::size_t r : tuple) edge[i] *= factor(i, r);
-  }
-  return edge;
-}
 
 static SampleResult core_sample(const std::array<Matrix, 3>& factors,
                                 unsigned power, std::size_t requested_samples,
@@ -266,23 +115,15 @@ static SampleResult core_sample(const std::array<Matrix, 3>& factors,
   stage = Clock::now();
   const std::size_t budget = prefilter == 0
       ? scores.size() : std::min(prefilter, scores.size());
-  const auto better_entry = [](const Entry& x, const Entry& y) {
-    return x.value != y.value ? x.value > y.value : x.index < y.index;
-  };
   // With BetterEntry as the priority-queue comparator, the worst retained
   // exact entry is at the top and can be replaced in O(log(top)).
-  struct BetterEntry {
-    bool operator()(const Entry& x, const Entry& y) const {
-      return x.value != y.value ? x.value > y.value : x.index < y.index;
-    }
-  };
   std::priority_queue<Entry, std::vector<Entry>, BetterEntry> top_heap;
   const auto consider = [&](std::uint64_t index) {
     const auto idx = decode(index, dims);
     const Entry entry{index, cp_value(factors, idx[0], idx[1], idx[2])};
     if (top_heap.size() < top) {
       top_heap.push(entry);
-    } else if (better_entry(entry, top_heap.top())) {
+    } else if (BetterEntry()(entry, top_heap.top())) {
       top_heap.pop();
       top_heap.push(entry);
     }
@@ -303,30 +144,9 @@ static SampleResult core_sample(const std::array<Matrix, 3>& factors,
     result.top.push_back(top_heap.top());
     top_heap.pop();
   }
-  std::sort(result.top.begin(), result.top.end(), better_entry);
+  std::sort(result.top.begin(), result.top.end(), BetterEntry());
   result.time.filtering = seconds(stage);
   return result;
-}
-
-static double recall(const std::vector<Entry>& truth,
-                     const std::vector<Entry>& estimate, std::size_t top) {
-  std::unordered_set<std::uint64_t> expected;
-  for (std::size_t i = 0; i < std::min(top, truth.size()); ++i) {
-    expected.insert(truth[i].index);
-  }
-  std::size_t hits = 0;
-  for (std::size_t i = 0; i < std::min(top, estimate.size()); ++i) {
-    hits += expected.count(estimate[i].index);
-  }
-  return top == 0 ? 1.0 : static_cast<double>(hits) / top;
-}
-
-static std::vector<std::size_t> parse_sizes(const std::string& text) {
-  std::vector<std::size_t> values;
-  std::istringstream in(text);
-  std::string token;
-  while (std::getline(in, token, ',')) values.push_back(std::stoull(token));
-  return values;
 }
 
 static Options parse_options(int argc, char** argv) {
@@ -354,7 +174,9 @@ static Options parse_options(int argc, char** argv) {
       std::cout << "Usage: star_sampling [--dims L1,L2,L3] [--rank R] [--top t1,t2,...]\n"
                    "  [--samples s1,s2,...] [--repeats N] [--prefilter N]\n"
                    "  [--seed N] [--factor-dir DIR] [--output-dir DIR] [--self-test]\n"
-                   "Factor files are DIR/A.csv, DIR/B.csv, and DIR/C.csv.\n";
+                   "Factor files are DIR/A.csv, DIR/B.csv, and DIR/C.csv.\n"
+                   "Runs Algorithm 1: exhaustive top-t ground truth plus CPU\n"
+                   "Core^1/Core^2/Core^3 sampling, with optional prefiltering.\n";
       std::exit(0);
     } else {
       throw std::runtime_error("unknown option: " + arg);
@@ -418,7 +240,7 @@ int main(int argc, char** argv) try {
   std::cout << "Tensor: " << dims[0] << 'x' << dims[1] << 'x' << dims[2]
             << ", rank=" << factors[0].cols << ", max_top=" << max_top << '\n';
   auto exact_start = Clock::now();
-  const auto truth = exact_top(factors, max_top);
+  const std::vector<Entry> truth = exact_top(factors, max_top);
   const double exact_seconds = seconds(exact_start);
   std::ofstream truth_csv(fs::path(options.output_dir) / "truth.csv");
   truth_csv << "rank,index,value\n";
@@ -426,7 +248,7 @@ int main(int argc, char** argv) try {
     truth_csv << i + 1 << ',' << truth[i].index << ','
               << std::setprecision(17) << truth[i].value << '\n';
   }
-  std::cout << "Exact search: " << std::fixed << std::setprecision(6)
+  std::cout << "Exact search (cpu): " << std::fixed << std::setprecision(6)
             << exact_seconds << " s\n";
 
   for (unsigned power = 1; power <= 3; ++power) {
@@ -436,8 +258,8 @@ int main(int argc, char** argv) try {
         const std::uint64_t seed = options.seed + power * 1000003ULL +
                                    requested * 31ULL + repeat;
         const std::size_t budget = options.prefilter == 0 ? requested : options.prefilter;
-        const auto result = core_sample(factors, power, requested, budget,
-                                        max_top, seed);
+        const SampleResult result =
+            core_sample(factors, power, requested, budget, max_top, seed);
         const double summary_recall = recall(truth, result.top, max_top);
         recall_sum += summary_recall;
         time_sum += result.time.total();

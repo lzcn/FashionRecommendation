@@ -3,10 +3,10 @@
 
 # Local experiment artifacts (not tracked)
 /data
-/doc
 /results/
 /paper/
 
 # Editor / OS noise
 .DS_Store
 .vscode/
+*.swp

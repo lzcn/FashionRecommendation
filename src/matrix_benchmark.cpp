@@ -18,19 +18,10 @@
 #include <unordered_set>
 #include <vector>
 
+#include "common.hpp"
+
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
-
-struct Matrix {
-  std::size_t rows = 0, cols = 0;
-  std::vector<double> values;
-  double operator()(std::size_t i, std::size_t r) const { return values[i * cols + r]; }
-};
-
-struct Entry {
-  std::uint64_t index = 0;
-  double value = 0.0;
-};
 
 struct Result {
   std::vector<Entry> top;
@@ -54,32 +45,6 @@ struct Options {
   std::uint64_t seed = 2017;
   bool self_test = false;
 };
-
-static double seconds(Clock::time_point start) {
-  return std::chrono::duration<double>(Clock::now() - start).count();
-}
-
-static int sign(double x) { return x < 0.0 ? -1 : 1; }
-
-static Matrix load_matrix(const fs::path& path) {
-  std::ifstream in(path);
-  if (!in) throw std::runtime_error("cannot open " + path.string());
-  Matrix matrix;
-  std::string line;
-  while (std::getline(in, line)) {
-    if (line.empty()) continue;
-    std::replace(line.begin(), line.end(), ',', ' ');
-    std::istringstream row(line);
-    std::vector<double> values;
-    double value = 0.0;
-    while (row >> value) values.push_back(value);
-    if (matrix.cols == 0) matrix.cols = values.size();
-    if (values.size() != matrix.cols) throw std::runtime_error("ragged matrix");
-    matrix.values.insert(matrix.values.end(), values.begin(), values.end());
-    ++matrix.rows;
-  }
-  return matrix;
-}
 
 static Matrix user_item_matrix(const Matrix& users, const Matrix& items,
                                std::size_t user) {
@@ -121,9 +86,7 @@ static std::vector<Entry> exact_top(const Matrix& left, const Matrix& right,
     result.push_back(heap.top());
     heap.pop();
   }
-  std::sort(result.begin(), result.end(), [](const Entry& x, const Entry& y) {
-    return x.value != y.value ? x.value > y.value : x.index < y.index;
-  });
+  std::sort(result.begin(), result.end(), BetterEntry());
   return result;
 }
 
@@ -221,25 +184,6 @@ static Result wedge_or_diamond(const Matrix& left, const Matrix& right,
   return result;
 }
 
-static std::vector<std::size_t> core_tuple(std::size_t code, std::size_t rank,
-                                           unsigned power) {
-  std::vector<std::size_t> tuple(power);
-  for (unsigned p = 0; p < power; ++p) {
-    tuple[power - 1 - p] = code % rank;
-    code /= rank;
-  }
-  return tuple;
-}
-
-static std::vector<double> compound_edge(const Matrix& matrix,
-                                         const std::vector<std::size_t>& tuple) {
-  std::vector<double> edge(matrix.rows, 1.0);
-  for (std::size_t i = 0; i < matrix.rows; ++i) {
-    for (std::size_t r : tuple) edge[i] *= matrix(i, r);
-  }
-  return edge;
-}
-
 static Result core_sample(const Matrix& left, const Matrix& right, unsigned power,
                           std::size_t samples, std::size_t budget,
                           std::size_t top, std::uint64_t seed) {
@@ -297,23 +241,6 @@ static Result core_sample(const Matrix& left, const Matrix& right, unsigned powe
   return result;
 }
 
-static double recall_at(const std::vector<Entry>& truth,
-                        const std::vector<Entry>& estimate, std::size_t top) {
-  std::unordered_set<std::uint64_t> expected;
-  for (std::size_t i = 0; i < std::min(top, truth.size()); ++i) expected.insert(truth[i].index);
-  std::size_t hits = 0;
-  for (std::size_t i = 0; i < std::min(top, estimate.size()); ++i) hits += expected.count(estimate[i].index);
-  return static_cast<double>(hits) / top;
-}
-
-static std::vector<std::size_t> parse_sizes(const std::string& text) {
-  std::vector<std::size_t> result;
-  std::istringstream in(text);
-  std::string token;
-  while (std::getline(in, token, ',')) result.push_back(std::stoull(token));
-  return result;
-}
-
 static std::vector<std::string> parse_strings(const std::string& text) {
   std::vector<std::string> result;
   std::istringstream in(text);
@@ -362,8 +289,8 @@ static int self_test() {
   const auto truth = exact_top(left, right, 3);
   const auto core = core_sample(left, right, 2, 100000, 10000, 3, 7);
   const auto diamond = wedge_or_diamond(left, right, true, 100000, 10000, 3, 7);
-  const double core_recall = recall_at(truth, core.top, 3);
-  const double diamond_recall = recall_at(truth, diamond.top, 3);
+  const double core_recall = recall(truth, core.top, 3);
+  const double diamond_recall = recall(truth, diamond.top, 3);
   if (core_recall < 1.0 || diamond_recall < 1.0) {
     std::cerr << "matrix benchmark self-test failed: core2=" << core_recall
               << " diamond=" << diamond_recall << '\n';
@@ -416,7 +343,7 @@ int main(int argc, char** argv) try {
           for (std::size_t top : options.tops) {
             csv << user << ',' << method << ',' << samples << ','
                 << result.actual_samples << ',' << top << ','
-                << std::setprecision(17) << recall_at(truth, result.top, top)
+                << std::setprecision(17) << recall(truth, result.top, top)
                 << ',' << factorization_time << ',' << result.initialization
                 << ',' << result.sampling_scoring << ',' << result.filtering
                 << ',' << result.total() << ',' << result.candidates << ','
